@@ -4,9 +4,11 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.request.SetWebhook;
 import com.pengrad.telegrambot.response.BaseResponse;
 
+import static spark.Spark.*;
+
 public class TelegramMain {
 
-	//telegram token
+	// telegram token
 	private static String token = System.getenv("ssTOKEN");
 
 	public static void main(String[] args) {
@@ -17,8 +19,11 @@ public class TelegramMain {
 		final String portNumber = System.getenv("PORT");
 		System.out.println("port:" + portNumber);
 		System.out.println("appUrl:" + appUrl);
-		System.out.println("appUrl + token:"+ appUrl + token);
-		System.out.println("all:" + appUrl + token + ":" + portNumber);
+		System.out.println("token:" + token);
+
+		if (portNumber != null) {
+			port(Integer.parseInt(portNumber));
+		}
 
 		SetWebhook request = new SetWebhook().url(appUrl + token + ":" + portNumber).certificate(new byte[] {}); // byte[]
 		BaseResponse response = bot.execute(request);
