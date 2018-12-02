@@ -25,7 +25,7 @@ public class TelegramMain {
 			port(Integer.parseInt(portNumber));
 		}
 
-		SetWebhook request = new SetWebhook().url(appUrl + token + ":" + portNumber).certificate(new byte[] {}); // byte[]
+		SetWebhook request = new SetWebhook().url(appUrl + token + ":" + portNumber); // byte[]
 		BaseResponse response = bot.execute(request);
 		boolean ok = response.isOk();
 		System.out.println(response.description());
