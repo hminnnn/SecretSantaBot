@@ -47,7 +47,7 @@ public class ReplyMessages {
 		boolean ok = sendResponse.isOk();
 		Message message = sendResponse.message();
 		Integer msgId = message.messageId();
-		System.out.println("sent msg: " + message);
+		//System.out.println("sent msg: " + message);
 		return msgId;
 
 	}
@@ -71,13 +71,13 @@ public class ReplyMessages {
 
 		boolean ok = sendResponse.isOk();
 		String message = sendResponse.description();
-		System.out.println("sent msg: " + message);
+		//System.out.println("sent msg: " + message);
 
 	}
 
 	public void duplicateParticipant(TelegramBot bot, String chatId, String participantName) {
 		System.out.println("duplicateParticipant");
-		String msg = "Invalid join command. " + participantName + " is already in the list";
+		String msg = "Invalid Join." + participantName + " is already in the list";
 
 		SendMessage request1 = new SendMessage(chatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
 				.disableNotification(true);
@@ -90,7 +90,7 @@ public class ReplyMessages {
 
 	public void removeInvalidParticipant(TelegramBot bot, String chatId, String participantName) {
 		System.out.println("removeInvalidParticipant");
-		String msg = "Invalid removal command. " + participantName + " is not in the list.";
+		String msg = "Invalid Un-Join. " + participantName + " is not in the list.";
 
 		SendMessage request1 = new SendMessage(chatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
 				.disableNotification(true);
@@ -103,7 +103,7 @@ public class ReplyMessages {
 	}
 
 	public void errorOccured(TelegramBot bot, String chatId) {
-		SendMessage request1 = new SendMessage(chatId, "Command unsuccessful. Error Occured").parseMode(ParseMode.HTML)
+		SendMessage request1 = new SendMessage(chatId, "Command unsuccessful. Error Occured!").parseMode(ParseMode.HTML)
 				.disableWebPagePreview(true).disableNotification(true);
 
 		SendResponse sendResponse = bot.execute(request1);
@@ -112,7 +112,7 @@ public class ReplyMessages {
 	}
 	
 	public void invalidJoin(TelegramBot bot, String chatId, String groupChatName) {
-		SendMessage request1 = new SendMessage(chatId, "Invalid start. Sorry, you can only join using your group's Join button").parseMode(ParseMode.HTML)
+		SendMessage request1 = new SendMessage(chatId, "Invalid Start. Sorry, you can only join using your group's Join button").parseMode(ParseMode.HTML)
 				.disableWebPagePreview(true).disableNotification(true);
 
 		SendResponse sendResponse = bot.execute(request1);
@@ -123,7 +123,7 @@ public class ReplyMessages {
 	public void insufficientParticipants(TelegramBot bot, String chatId) {
 		System.out.println("insufficientParticipants");
 
-		SendMessage request1 = new SendMessage(chatId, "Invalid finish command. Needs at least 2 people.")
+		SendMessage request1 = new SendMessage(chatId, "Invalid Finish. Needs at least 2 people to play.")
 				.parseMode(ParseMode.HTML).disableWebPagePreview(true).disableNotification(true);
 
 		SendResponse sendResponse = bot.execute(request1);
@@ -136,7 +136,7 @@ public class ReplyMessages {
 		System.out.println("finishButton");
 		System.out.println("joinMsgId:" + joinMsgId);
 		SendMessage request1 = new SendMessage(groupChatId,
-				"Alright we're ready! \n" + "SantaBot will drop each of you a message on who your Secret Santee is!")
+				"Alright we're ready! \n" + "SecretSantaBot will drop each of you a message on who your Secret Santee is!")
 						.parseMode(ParseMode.HTML).disableWebPagePreview(true).disableNotification(true);
 
 		SendResponse sendResponse = bot.execute(request1);
@@ -159,9 +159,9 @@ public class ReplyMessages {
 
 		String helpMsg = "/startgame to start a new session! \n"
 				+ "Press <b>Join</b> to add your name to the list. SecretSantaBot will /start a chat with you \n"
-				+ "Press <b>Remove</b> to remove yourself from the list \n"
+				+ "Press <b>Un-Join</b> to remove yourself from the list \n"
 				+ "Press <b>Finish</b> once everyone's name is up \n"
-				+ "SantaBot will then message everyone individually to let them know who their Secret Santee is \n"
+				+ "SecretSantaBot will then message everyone individually to let them know who their Secret Santee is \n"
 				+ "\n" + "Merry Christmas! \n";
 
 		SendMessage request1 = new SendMessage(chatId, helpMsg).parseMode(ParseMode.HTML).disableWebPagePreview(true)

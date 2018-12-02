@@ -13,7 +13,7 @@ import com.pengrad.telegrambot.model.MessageEntity;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 
-public class UpdateListener implements UpdatesListener {
+public class UpdateListenerWebhook {
 
 	private TelegramBot bot;
 	private Map<String, SecretSantaBot> santaBotsChatsMap = new HashMap<String, SecretSantaBot>(); // <chat id,
@@ -24,15 +24,12 @@ public class UpdateListener implements UpdatesListener {
 	private String individualChatId;
 	private String chatId;
 
-	public UpdateListener(TelegramBot bot) {
-		System.out.println("set UpdateListener");
+	public UpdateListenerWebhook(TelegramBot bot) {
 		this.bot = bot;
 	}
 
-	@Override
-	public int process(List<Update> updates) {
-		System.out.println("process!!!");
-		Update upd = updates.get(0);
+	public void process(Update update) {
+		Update upd = update;
 		String updateId = upd.updateId().toString();
 
 		if (updateIdArray.contains(updateId)) {
@@ -40,20 +37,22 @@ public class UpdateListener implements UpdatesListener {
 		} else {
 			updateIdArray.add(updateId);
 			System.out.println("------------New Message----------");
-			System.out.println("upd:" + upd);
 			processNewUpdate(upd);
 		}
-		return UpdatesListener.CONFIRMED_UPDATES_ALL;
+		//return UpdatesListener.CONFIRMED_UPDATES_ALL;
 	}
 
 	private void processNewUpdate(Update upd) {
+		
+		System.out.println("upd:" + upd);
 
 		Message message = upd.message();
+		
+		// System.out.println("message:" + message);
 
 		CallbackQuery callbackQ = upd.callbackQuery();
 
 		if (message != null) {
-			System.out.println("message");
 			MessageEntity[] msgEntities = message.entities();
 			String msgText = message.text();
 
@@ -80,6 +79,8 @@ public class UpdateListener implements UpdatesListener {
 				}
 
 			}
+		} else {
+			System.out.println("Update message is null");
 		}
 
 		// Buttons callback
@@ -124,5 +125,4 @@ public class UpdateListener implements UpdatesListener {
 		}
 		return participantName;
 	}
-
 }
