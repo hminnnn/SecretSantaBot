@@ -16,12 +16,11 @@ import com.pengrad.telegrambot.model.User;
 public class UpdateListenerWebhook {
 
 	private TelegramBot bot;
-	private Map<String, SecretSantaBot> santaBotsChatsMap = new HashMap<String, SecretSantaBot>(); // <chat id,
-																									// SecretSantaBot>
+	private Map<String, SecretSantaBot> santaBotsChatsMap = new HashMap<String, SecretSantaBot>(); 
+	// <chat id, SecretSantaBot>
 	private ArrayList<String> updateIdArray = new ArrayList<String>();
 
 	private String groupChatId;
-	private String individualChatId;
 	private String chatId;
 
 	public UpdateListenerWebhook(TelegramBot bot) {
@@ -40,17 +39,16 @@ public class UpdateListenerWebhook {
 //			System.out.println("upd:" + upd);
 			processNewUpdate(upd);
 		}
-		// return UpdatesListener.CONFIRMED_UPDATES_ALL;
 	}
 
 	private void processNewUpdate(Update upd) {
 
 		Message message = upd.message();
-
 		// System.out.println("message:" + message);
 
 		CallbackQuery callbackQ = upd.callbackQuery();
 
+		// normal text commands
 		if (message != null) {
 			MessageEntity[] msgEntities = message.entities();
 			String msgText = message.text();
@@ -64,14 +62,13 @@ public class UpdateListenerWebhook {
 					System.out.println("chatId:" + chatId);
 
 					if (isStartGameCommand(msgText)) {
-						// start game command = new santabot
 						groupChatId = chatId;
-
-						if (santaBotsChatsMap.get(groupChatId) != null) {
+						if (santaBotsChatsMap.get(groupChatId) != null) { 
+							// duplicate /startgame command, terminates previous session.
 							santaBotsChatsMap.get(groupChatId).update(upd);
 							santaBotsChatsMap.remove(groupChatId);
-							
 						} else {
+							// /startgame, new session new secretSantaBot
 							SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, groupChatId);
 							santaBotsChatsMap.put(groupChatId, secretSantaBot);
 						}

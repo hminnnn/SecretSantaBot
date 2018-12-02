@@ -13,8 +13,6 @@ public abstract class MyBotHandler implements Route {
 	@Override
 	public Object handle(Request request, Response response) throws Exception {
 		Update update = BotUtils.parseUpdate(request.body());
-		//Message message = update.message();
-
 		onWebhookUpdate(update);
 
 		return "ok";
