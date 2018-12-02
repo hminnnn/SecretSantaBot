@@ -38,7 +38,7 @@ public class SecretSantaBot {
 		groupChatId = chatId;
 		participantIdNameMap = new HashMap<String, String>();
 		userChatIdMap = new HashMap<String, String>();
-		System.out.println("-- New message in SecretSantaBot -- ");
+		System.out.println("---- New message in SecretSantaBot ---- ");
 		joinMsgId = replyMsg.createJoinMainMessage(bot, groupChatId, participantIdNameMap);
 		groupChatName = update.message().chat().title();
 				
@@ -49,7 +49,7 @@ public class SecretSantaBot {
 	public void update(Update upd) {
 		Message message = upd.message();
 		CallbackQuery callbackQ = upd.callbackQuery();
-		System.out.println("-- New message in SecretSantaBot -- ");
+		System.out.println("---- New message in SecretSantaBot ---- ");
 		if (message != null) {
 			processMessage(message);
 		}

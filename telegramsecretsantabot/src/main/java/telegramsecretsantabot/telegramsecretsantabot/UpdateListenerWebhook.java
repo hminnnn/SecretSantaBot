@@ -36,7 +36,8 @@ public class UpdateListenerWebhook {
 			// ignore messages of the same id
 		} else {
 			updateIdArray.add(updateId);
-			System.out.println("------------New Message----------");
+//			System.out.println("------------New Message----------");
+//			System.out.println("upd:" + upd);
 			processNewUpdate(upd);
 		}
 		//return UpdatesListener.CONFIRMED_UPDATES_ALL;
@@ -44,8 +45,6 @@ public class UpdateListenerWebhook {
 
 	private void processNewUpdate(Update upd) {
 		
-		System.out.println("upd:" + upd);
-
 		Message message = upd.message();
 		
 		// System.out.println("message:" + message);
@@ -79,14 +78,16 @@ public class UpdateListenerWebhook {
 				}
 
 			}
-		} else {
-			System.out.println("Update message is null");
-		}
+		} 
+//		else {
+//			System.out.println("Update message is null");
+//		}
 
 		// Buttons callback
 		if (callbackQ != null) {
-			System.out.println("callback");
+			
 			groupChatId = callbackQ.message().chat().id().toString();
+			System.out.println("callback command from groupChatId: " + groupChatId);
 			
 			// send update to the group chat's santabot
 			if(santaBotsChatsMap.get(groupChatId) != null) {

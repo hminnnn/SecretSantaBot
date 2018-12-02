@@ -19,7 +19,7 @@ import com.pengrad.telegrambot.response.SendResponse;
 public class ReplyMessages {
 
 	public void eachParticipantInitCommand(TelegramBot bot, String chatId, String groupChatName) {
-		System.out.println("eachParticipantInitCommand");
+//		System.out.println("eachParticipantInitCommand");
 		SendMessage request1 = new SendMessage(chatId, "You have successfully added yourself into the list in "+ groupChatName)
 				.parseMode(ParseMode.HTML).disableWebPagePreview(true).disableNotification(true);
 
@@ -31,7 +31,7 @@ public class ReplyMessages {
 	public Integer createJoinMainMessage(TelegramBot bot, String groupChatId,
 			Map<String, String> participantIdNameMap) {
 
-		System.out.println("createJoinMainMessage");
+//		System.out.println("createJoinMainMessage");
 
 		InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new InlineKeyboardButton[] {
 				new InlineKeyboardButton("Join").url("https://telegram.me/HMSantaBot?start=123456789asdfghjkl"),
@@ -76,7 +76,7 @@ public class ReplyMessages {
 	}
 
 	public void duplicateParticipant(TelegramBot bot, String chatId, String participantName) {
-		System.out.println("duplicateParticipant");
+//		System.out.println("duplicateParticipant");
 		String msg = "Invalid Join." + participantName + " is already in the list";
 
 		SendMessage request1 = new SendMessage(chatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
@@ -190,7 +190,7 @@ public class ReplyMessages {
 	private String getParticipantsNameString(Map<String, String> participantIdNameMap) {
 		String stringOfNames = "";
 		for (Object names : participantIdNameMap.values()) {
-			stringOfNames += (names + "\n");
+			stringOfNames += (names + " ");
 		}
 
 		return stringOfNames;

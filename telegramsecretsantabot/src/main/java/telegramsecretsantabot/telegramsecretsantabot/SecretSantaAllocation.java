@@ -27,6 +27,7 @@ public class SecretSantaAllocation {
 	}
 
 	public int[][] allocateSecretSanta(int totalPlayers) {
+		System.out.println("------------------ SecretSantaAllocation ----------------");
 
 		ArrayList<String> peopleList = new ArrayList<String>(totalPlayers);
 		boolean allAssigned = false;
