@@ -21,7 +21,7 @@ public class SecretSantaBot {
 	private String chatId;
 
 	// private ArrayList<String> updateIdArray = new ArrayList<String>();
-	private Integer listMsgId;
+	private String personCreatedId;
 	private Integer joinMsgId;
 	// private boolean isNewListMsg;
 
@@ -41,7 +41,12 @@ public class SecretSantaBot {
 		System.out.println("---- New message in SecretSantaBot ---- ");
 		joinMsgId = replyMsg.createJoinMainMessage(bot, groupChatId, participantIdNameMap);
 		groupChatName = update.message().chat().title();
-				
+		
+		// get person who created list. only this person can press Finish.
+		System.out.println("find person who created list id:" + personCreatedId);
+		User participant = update.message().from();
+		personCreatedId = getParticipantId(participant);
+		
 		System.out.println("joinMsgId:" + joinMsgId);
 		System.out.println("groupChatId:" + groupChatId);
 	}
@@ -96,8 +101,14 @@ public class SecretSantaBot {
 			if (participantIdNameMap.isEmpty() || participantIdNameMap.size() < 2) {
 				replyMsg.insufficientParticipants(bot, groupChatId);
 			} else {
-				replyMsg.finishButton(bot, groupChatId, joinMsgId, participantIdNameMap);
-				startSecretSantaAllocation();
+				if (participantUserId.equals(personCreatedId)) {
+					replyMsg.finishButton(bot, groupChatId, joinMsgId, participantIdNameMap);
+					startSecretSantaAllocation();
+				} else {
+					String creatorName = participantIdNameMap.get(personCreatedId);
+					replyMsg.invalidFinishButton(bot, chatId, creatorName);
+				}
+				
 			}
 
 			break;
@@ -109,6 +120,7 @@ public class SecretSantaBot {
 		String messageChatType = message.chat().type().toString();
 		String msgText = message.text();
 		chatId = message.chat().id().toString();
+		int reply = 0;
 
 		// get chat ids
 		if (messageChatType.equalsIgnoreCase("group") || messageChatType.equalsIgnoreCase("supergroup")) {
@@ -144,6 +156,10 @@ public class SecretSantaBot {
 		if (isInvalidStartCommand(msgText)) {
 			replyMsg.invalidJoin(bot, individualChatId, groupChatName);
 		}
+		if (isStartGameCommand(msgText)) {
+			replyMsg.multipleStartGameCommand(bot, groupChatId, joinMsgId, participantIdNameMap);
+		}
+		
 	}
 
 	private boolean isHelpCommand(String command) {
@@ -163,6 +179,22 @@ public class SecretSantaBot {
 	
 	private boolean isInvalidStartCommand(String command) {
 		if (command.equals(("/start"))) {
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean isStartGameCommand(String command) {
+		if (command.contains("/startgame")) {
+			System.out.println("/startgame");
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean isEndCommand(String command) {
+		if (command.contains("/end")) {
+			System.out.println("/end");
 			return true;
 		}
 		return false;

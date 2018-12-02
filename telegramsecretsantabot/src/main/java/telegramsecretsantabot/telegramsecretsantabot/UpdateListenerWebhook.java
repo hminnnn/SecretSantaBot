@@ -40,13 +40,13 @@ public class UpdateListenerWebhook {
 //			System.out.println("upd:" + upd);
 			processNewUpdate(upd);
 		}
-		//return UpdatesListener.CONFIRMED_UPDATES_ALL;
+		// return UpdatesListener.CONFIRMED_UPDATES_ALL;
 	}
 
 	private void processNewUpdate(Update upd) {
-		
+
 		Message message = upd.message();
-		
+
 		// System.out.println("message:" + message);
 
 		CallbackQuery callbackQ = upd.callbackQuery();
@@ -60,17 +60,25 @@ public class UpdateListenerWebhook {
 			if (msgEntities != null && msgEntities.length > 0) {
 				String commandType = msgEntities[0].type().toString();
 				if (isBotCommand(commandType)) {
-					
+
 					System.out.println("chatId:" + chatId);
-					
+
 					if (isStartGameCommand(msgText)) {
 						// start game command = new santabot
 						groupChatId = chatId;
-						SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, groupChatId);
-						santaBotsChatsMap.put(groupChatId, secretSantaBot);
+
+						if (santaBotsChatsMap.get(groupChatId) != null) {
+							santaBotsChatsMap.get(groupChatId).update(upd);
+							santaBotsChatsMap.remove(groupChatId);
+							
+						} else {
+							SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, groupChatId);
+							santaBotsChatsMap.put(groupChatId, secretSantaBot);
+						}
+
 					} else {
 						// send update to the group chat's santabot
-						if(santaBotsChatsMap.get(groupChatId) != null) {
+						if (santaBotsChatsMap.get(groupChatId) != null) {
 							santaBotsChatsMap.get(groupChatId).update(upd);
 						}
 					}
@@ -78,22 +86,21 @@ public class UpdateListenerWebhook {
 				}
 
 			}
-		} 
+		}
 //		else {
 //			System.out.println("Update message is null");
 //		}
 
 		// Buttons callback
 		if (callbackQ != null) {
-			
+
 			groupChatId = callbackQ.message().chat().id().toString();
 			System.out.println("callback command from groupChatId: " + groupChatId);
-			
+
 			// send update to the group chat's santabot
-			if(santaBotsChatsMap.get(groupChatId) != null) {
+			if (santaBotsChatsMap.get(groupChatId) != null) {
 				santaBotsChatsMap.get(groupChatId).update(upd);
 			}
-			
 
 		}
 	}
