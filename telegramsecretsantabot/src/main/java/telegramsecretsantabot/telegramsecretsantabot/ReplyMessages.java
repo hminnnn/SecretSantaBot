@@ -218,7 +218,6 @@ public class ReplyMessages {
 	}
 	
 	public void invalidStartGameCommand(TelegramBot bot, String chatId) {
-//		System.out.println("eachParticipantInitCommand");
 		String msg = "Invalid start game command. Please /startgame only from a group chat.";
 		SendMessage request1 = new SendMessage(chatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
 				.disableNotification(true);
@@ -227,8 +226,16 @@ public class ReplyMessages {
 	}
 	
 	public void invalidStartCommand(TelegramBot bot, String chatId) {
-//		System.out.println("eachParticipantInitCommand");
 		String msg = "Invalid start command. Please use /startgame when in a group chat.";
+		SendMessage request1 = new SendMessage(chatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
+				.disableNotification(true);
+
+		sendMessage(bot,request1);
+	}
+	
+	public void invalidCommand(TelegramBot bot, String chatId) {
+//		System.out.println("eachParticipantInitCommand");
+		String msg = "Invalid command. ";
 		SendMessage request1 = new SendMessage(chatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
 				.disableNotification(true);
 

@@ -82,13 +82,9 @@ public class UpdateListenerWebhook {
 						}
 					} else {
 					// Personal Chat
-						if (santaBotPersonalChatsMap.get(chatId) != null) {
-							santaBotsChatsMap.get(chatId).update(upd);
-						} else {
-							SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, groupChatId);
-							santaBotPersonalChatsMap.put(chatId, secretSantaBot);
-							secretSantaBot.update(upd);
-						}
+						SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, chatId);
+						santaBotPersonalChatsMap.put(chatId, secretSantaBot);
+						secretSantaBot.update(upd);
 					}
 
 //					if (isStartGameCommand(msgText)) {
