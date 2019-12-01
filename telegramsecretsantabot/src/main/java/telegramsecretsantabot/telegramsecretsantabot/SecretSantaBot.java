@@ -37,16 +37,16 @@ public class SecretSantaBot {
 		userChatIdMap = new HashMap<String, String>();
 		
 		System.out.println("---- New message in SecretSantaBot ---- ");
-		joinMsgId = replyMsg.createJoinMainMessage(bot, groupChatId, participantIdNameMap);
-		groupChatName = update.message().chat().title();
-		
-		// get person who created list. only this person can press Finish.
-		System.out.println("find person who created list id:" + personCreatedId);
-		User participant = update.message().from();
-		personCreatedId = getParticipantId(participant);
-		
-		System.out.println("joinMsgId:" + joinMsgId);
-		System.out.println("groupChatId:" + groupChatId);
+//		joinMsgId = replyMsg.createJoinMainMessage(bot, groupChatId, participantIdNameMap);
+//		groupChatName = update.message().chat().title();
+//		
+//		// get person who created list. only this person can press Finish.
+//		System.out.println("find person who created list id:" + personCreatedId);
+//		User participant = update.message().from();
+//		personCreatedId = getParticipantId(participant);
+//		
+//		System.out.println("joinMsgId:" + joinMsgId);
+//		System.out.println("groupChatId:" + groupChatId);
 	}
 
 	public void update(Update upd) {
@@ -154,6 +154,22 @@ public class SecretSantaBot {
 				}
 			}
 			
+			
+		}
+		
+		if(isStartGameCommand(msgText)) {
+			
+			if (isFromGroupChat(messageChatType)) {
+				joinMsgId = replyMsg.createJoinMainMessage(bot, groupChatId, participantIdNameMap);
+				groupChatName = update.message().chat().title();
+				
+				// get person who created list. only this person can press Finish.
+				System.out.println("find person who created list id:" + personCreatedId);
+				User participant = update.message().from();
+				personCreatedId = getParticipantId(participant);
+			} else {
+				replyMsg.invalidStartGameCommand(bot, chatId);
+			}
 			
 		}
 		
