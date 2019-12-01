@@ -16,12 +16,11 @@ import com.pengrad.telegrambot.model.User;
 public class UpdateListenerWebhook {
 
 	private TelegramBot bot;
-	private Map<String, SecretSantaBot> santaBotsChatsMap = new HashMap<String, SecretSantaBot>(); // <chat id,
-																									// SecretSantaBot>
+	private Map<String, SecretSantaBot> santaBotsChatsMap = new HashMap<String, SecretSantaBot>(); 
+	// <chat id, SecretSantaBot>
 	private ArrayList<String> updateIdArray = new ArrayList<String>();
 
 	private String groupChatId;
-	private String individualChatId;
 	private String chatId;
 
 	public UpdateListenerWebhook(TelegramBot bot) {
@@ -40,17 +39,16 @@ public class UpdateListenerWebhook {
 //			System.out.println("upd:" + upd);
 			processNewUpdate(upd);
 		}
-		//return UpdatesListener.CONFIRMED_UPDATES_ALL;
 	}
 
 	private void processNewUpdate(Update upd) {
-		
+
 		Message message = upd.message();
-		
 		// System.out.println("message:" + message);
 
 		CallbackQuery callbackQ = upd.callbackQuery();
 
+		// normal text commands
 		if (message != null) {
 			MessageEntity[] msgEntities = message.entities();
 			String msgText = message.text();
@@ -60,17 +58,24 @@ public class UpdateListenerWebhook {
 			if (msgEntities != null && msgEntities.length > 0) {
 				String commandType = msgEntities[0].type().toString();
 				if (isBotCommand(commandType)) {
-					
-					System.out.println("chatId:" + chatId);
-					
-					if (isStartGameCommand(msgText)) {
-						// start game command = new santabot
+
+					System.out.println("chatId from updatelistenerwebhook:" + chatId);
+
+					if (isStartGameCommand(msgText) || isHelpCommand(msgText)) {
 						groupChatId = chatId;
-						SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, groupChatId);
-						santaBotsChatsMap.put(groupChatId, secretSantaBot);
+						if (santaBotsChatsMap.get(groupChatId) != null) { 
+							// duplicate /startgame command, terminates previous session.
+							santaBotsChatsMap.get(groupChatId).update(upd);
+							santaBotsChatsMap.remove(groupChatId);
+						} else {
+							// /startgame, new session new secretSantaBot
+							SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, groupChatId);
+							santaBotsChatsMap.put(groupChatId, secretSantaBot);
+						}
+						
 					} else {
 						// send update to the group chat's santabot
-						if(santaBotsChatsMap.get(groupChatId) != null) {
+						if (santaBotsChatsMap.get(groupChatId) != null) {
 							santaBotsChatsMap.get(groupChatId).update(upd);
 						}
 					}
@@ -78,22 +83,21 @@ public class UpdateListenerWebhook {
 				}
 
 			}
-		} 
+		}
 //		else {
 //			System.out.println("Update message is null");
 //		}
 
 		// Buttons callback
 		if (callbackQ != null) {
-			
+
 			groupChatId = callbackQ.message().chat().id().toString();
 			System.out.println("callback command from groupChatId: " + groupChatId);
-			
+
 			// send update to the group chat's santabot
-			if(santaBotsChatsMap.get(groupChatId) != null) {
+			if (santaBotsChatsMap.get(groupChatId) != null) {
 				santaBotsChatsMap.get(groupChatId).update(upd);
 			}
-			
 
 		}
 	}
@@ -113,6 +117,13 @@ public class UpdateListenerWebhook {
 		return false;
 	}
 
+	private boolean isHelpCommand(String command) {
+		if (command.contains("/help")) {
+			System.out.println("/help");
+			return true;
+		}
+		return false;
+	}
 	private String getParticipantName(User participant) {
 		String participantName = "";
 		if (participant.firstName() != null && participant.firstName() != "") {
