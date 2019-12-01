@@ -90,7 +90,7 @@ public class SecretSantaBot {
 		case "RemoveButtonCallback":
 			if (participantIdNameMap.containsKey(participantUserId)) {
 				participantIdNameMap.remove(participantUserId);
-				replyMsg.editJoinMainMessage(bot, groupChatId, joinMsgId, participantIdNameMap);
+				replyMsg.editJoinMainMessage(bot, groupChatId, joinMsgId, participantIdNameMap, groupChatId);
 			} else {
 				replyMsg.removeInvalidParticipant(bot, groupChatId, participantName);
 			}
@@ -152,7 +152,7 @@ public class SecretSantaBot {
 					replyMsg.eachParticipantInitCommand(bot, individualChatId, groupChatName);
 
 					System.out.println("joinMsgId:" + joinMsgId);
-					replyMsg.editJoinMainMessage(bot, groupChatId, joinMsgId, participantIdNameMap);
+					replyMsg.editJoinMainMessage(bot, groupChatId, joinMsgId, participantIdNameMap, groupChatId);
 				}
 			}
 

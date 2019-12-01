@@ -52,13 +52,13 @@ public class ReplyMessages {
 	}
 
 	public void editJoinMainMessage(TelegramBot bot, String groupChatId, Integer msgId,
-			Map<String, String> participantIdNameMap) {
+			Map<String, String> participantIdNameMap, String key) {
 
 		System.out.println("joinButton " + getParticipantsNameString(participantIdNameMap));
 		System.out.println("joinMsgId:" + msgId);
 
 		InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new InlineKeyboardButton[] {
-				new InlineKeyboardButton("Join").url("https://telegram.me/HMSantaBot?start=123456789asdfghjkl"),
+				new InlineKeyboardButton("Join").url("https://telegram.me/HMSantaBot?start="+key),
 				new InlineKeyboardButton("Un-Join").callbackData("RemoveButtonCallback"),
 				new InlineKeyboardButton("Finish!").callbackData("FinishButtonCallback") });
 

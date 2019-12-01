@@ -81,12 +81,27 @@ public class UpdateListenerWebhook {
 							secretSantaBot.update(upd);
 
 						}
-					} else {
 						// Personal Chat
+					} else {
+
+						// Find the group chat this person came from
+						String command = message.text();
 						
-						SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, chatId);
-						santaBotPersonalChatsMap.put(chatId, secretSantaBot);
-						secretSantaBot.update(upd);
+						if (command.contains("/start")) {
+							System.out.println("command /start+groupid:" + command );
+							String key = command.substring(6);
+							System.out.println("key:" + key);
+
+							if (santaBotsChatsMap.containsKey(key)) {
+								santaBotsChatsMap.get(key).update(upd);
+							}
+						} else {
+							SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, chatId);
+							santaBotPersonalChatsMap.put(chatId, secretSantaBot);
+							secretSantaBot.update(upd);
+						}
+						
+					
 					}
 
 //					if (isStartGameCommand(msgText)) {
@@ -148,6 +163,13 @@ public class UpdateListenerWebhook {
 	private boolean isHelpCommand(String command) {
 		if (command.contains("/help")) {
 			System.out.println("/help");
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean isStartCommand(String command, String groupChatId) {
+		if (command.equals(("/start ") + groupChatId)) {
 			return true;
 		}
 		return false;
