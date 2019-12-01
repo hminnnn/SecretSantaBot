@@ -60,10 +60,12 @@ public class UpdateListenerWebhook {
 				if (isBotCommand(commandType)) {
 
 					System.out.println("chatId from updatelistenerwebhook:" + chatId);
+					
+					System.out.println("(message.chat():" + message.chat());
 					if (isFromGroupChat(message.chat().type().toString())) {
-
+						groupChatId = chatId;
 						if (isStartGameCommand(msgText)) {
-							groupChatId = chatId;
+							
 							if (santaBotsChatsMap.get(groupChatId) != null) {
 								// duplicate /startgame command, terminates previous session.
 								santaBotsChatsMap.get(groupChatId).update(upd);
@@ -76,8 +78,8 @@ public class UpdateListenerWebhook {
 						}
 					} else {
 						// send update to the group chat's santabot
-						if (santaBotsChatsMap.get(groupChatId) != null) {
-							santaBotsChatsMap.get(groupChatId).update(upd);
+						if (santaBotsChatsMap.get(chatId) != null) {
+							santaBotsChatsMap.get(chatId).update(upd);
 						}
 					}
 

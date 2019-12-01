@@ -154,6 +154,7 @@ public class SecretSantaBot {
 		}
 		
 		if (isStartGameCommand(msgText)) {
+			System.out.println("joinMsgId to remove:" + joinMsgId);
 			replyMsg.multipleStartGameCommand(bot, groupChatId, joinMsgId, participantIdNameMap);
 		}
 		
