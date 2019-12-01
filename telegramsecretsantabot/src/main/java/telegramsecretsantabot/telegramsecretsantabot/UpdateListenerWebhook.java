@@ -67,21 +67,20 @@ public class UpdateListenerWebhook {
 					// Group chat
 					if (isFromGroupChat(message.chat().type().toString())) {
 						groupChatId = chatId;
-						if (isStartGameCommand(msgText)) {
 
-							if (santaBotsChatsMap.get(groupChatId) != null) {
-								// duplicate /startgame command, terminates previous session.
-								santaBotsChatsMap.get(groupChatId).update(upd);
+						if (santaBotsChatsMap.get(groupChatId) != null) {
+							// duplicate /startgame command, terminates previous session.
+							santaBotsChatsMap.get(groupChatId).update(upd);
 //								santaBotsChatsMap.remove(groupChatId);
-							} else {
-								// /startgame, new session new secretSantaBot
-								SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, groupChatId);
-								santaBotsChatsMap.put(groupChatId, secretSantaBot);
-								secretSantaBot.update(upd);
-							}
+						} else {
+							// /startgame, new session new secretSantaBot
+							SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, groupChatId);
+							santaBotsChatsMap.put(groupChatId, secretSantaBot);
+							secretSantaBot.update(upd);
+
 						}
 					} else {
-					// Personal Chat
+						// Personal Chat
 						SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, chatId);
 						santaBotPersonalChatsMap.put(chatId, secretSantaBot);
 						secretSantaBot.update(upd);
