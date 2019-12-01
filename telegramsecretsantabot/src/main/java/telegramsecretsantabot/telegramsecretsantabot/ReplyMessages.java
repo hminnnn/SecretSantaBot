@@ -24,9 +24,7 @@ public class ReplyMessages {
 		SendMessage request1 = new SendMessage(chatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
 				.disableNotification(true);
 
-		SendResponse sendResponse = bot.execute(request1);
-		boolean ok = sendResponse.isOk();
-		Message message = sendResponse.message();
+		sendMessage(bot,request1);
 	}
 
 	public Integer createJoinMainMessage(TelegramBot bot, String groupChatId,
@@ -68,8 +66,8 @@ public class ReplyMessages {
 				"<b>Secret Santa Game</b> \n" + "Who's in: " + participantIdNameMap.size() + "\n"
 						+ getParticipantsNameString(participantIdNameMap)).parseMode(ParseMode.HTML)
 								.disableWebPagePreview(true).replyMarkup(inlineKeyboard);
+		
 		BaseResponse sendResponse = bot.execute(editInlineMessageText);
-
 		boolean ok = sendResponse.isOk();
 		String message = sendResponse.description();
 		// System.out.println("sent msg: " + message);
@@ -83,9 +81,7 @@ public class ReplyMessages {
 		SendMessage request1 = new SendMessage(chatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
 				.disableNotification(true);
 
-		SendResponse sendResponse = bot.execute(request1);
-		boolean ok = sendResponse.isOk();
-		Message message = sendResponse.message();
+		sendMessage(bot,request1);
 		// System.out.print("sent msg: " + message);
 	}
 
@@ -96,9 +92,7 @@ public class ReplyMessages {
 		SendMessage request1 = new SendMessage(chatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
 				.disableNotification(true);
 
-		SendResponse sendResponse = bot.execute(request1);
-		boolean ok = sendResponse.isOk();
-		Message message = sendResponse.message();
+		sendMessage(bot,request1);
 		// System.out.print("sent msg: " + message);
 
 	}
@@ -107,9 +101,7 @@ public class ReplyMessages {
 		SendMessage request1 = new SendMessage(chatId, "Command unsuccessful. Error Occured!").parseMode(ParseMode.HTML)
 				.disableWebPagePreview(true).disableNotification(true);
 
-		SendResponse sendResponse = bot.execute(request1);
-		boolean ok = sendResponse.isOk();
-		Message message = sendResponse.message();
+		sendMessage(bot,request1);
 	}
 
 	public void invalidJoin(TelegramBot bot, String chatId, String groupChatName) {
@@ -117,9 +109,7 @@ public class ReplyMessages {
 		SendMessage request1 = new SendMessage(chatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
 				.disableNotification(true);
 
-		SendResponse sendResponse = bot.execute(request1);
-		boolean ok = sendResponse.isOk();
-		Message message = sendResponse.message();
+		sendMessage(bot,request1);
 	}
 
 	public void insufficientParticipants(TelegramBot bot, String chatId) {
@@ -129,9 +119,7 @@ public class ReplyMessages {
 		SendMessage request1 = new SendMessage(chatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
 				.disableNotification(true);
 
-		SendResponse sendResponse = bot.execute(request1);
-		boolean ok = sendResponse.isOk();
-		Message message = sendResponse.message();
+		sendMessage(bot,request1);
 		// System.out.println("sent msg: " + message);
 	}
 
@@ -144,9 +132,7 @@ public class ReplyMessages {
 						+ "SecretSantaBot will drop each of you a message on who your Secret Santee is!")
 								.parseMode(ParseMode.HTML).disableWebPagePreview(true).disableNotification(true);
 
-		SendResponse sendResponse = bot.execute(request1);
-		boolean ok = sendResponse.isOk();
-		Message message = sendResponse.message();
+		sendMessage(bot,request1);
 
 		System.out.println("remove Inline buttons from joinMsgId:" + joinMsgId);
 
@@ -173,9 +159,7 @@ public class ReplyMessages {
 		SendMessage request1 = new SendMessage(chatId, helpMsg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
 				.disableNotification(true);
 
-		SendResponse sendResponse = bot.execute(request1);
-		boolean ok = sendResponse.isOk();
-		Message message = sendResponse.message();
+		sendMessage(bot,request1);
 		// System.out.print("sent msg: " + message);
 	}
 
@@ -187,9 +171,7 @@ public class ReplyMessages {
 		SendMessage request1 = new SendMessage(chatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
 				.disableNotification(true);
 
-		SendResponse sendResponse = bot.execute(request1);
-		boolean ok = sendResponse.isOk();
-		Message message = sendResponse.message();
+		sendMessage(bot,request1);
 		// System.out.print("sent msg: " + message);
 	}
 
@@ -211,9 +193,7 @@ public class ReplyMessages {
 		SendMessage request1 = new SendMessage(groupChatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
 				.disableNotification(true);
 
-		SendResponse sendResponse = bot.execute(request1);
-		boolean ok = sendResponse.isOk();
-		Message message = sendResponse.message();
+		sendMessage(bot,request1);
 
 		System.out.println("remove Inline buttons from joinMsgId:" + joinMsgId);
 
@@ -233,8 +213,33 @@ public class ReplyMessages {
 		SendMessage request1 = new SendMessage(chatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
 				.disableNotification(true);
 
+		sendMessage(bot,request1);
+
+	}
+	
+	public void invalidStartGameCommand(TelegramBot bot, String chatId) {
+//		System.out.println("eachParticipantInitCommand");
+		String msg = "Invalid start game command. Please /startgame only from a group chat.";
+		SendMessage request1 = new SendMessage(chatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
+				.disableNotification(true);
+
+		sendMessage(bot,request1);
+	}
+	
+	public void invalidStartCommand(TelegramBot bot, String chatId) {
+//		System.out.println("eachParticipantInitCommand");
+		String msg = "Invalid start command. Please use /startgame when in a group chat.";
+		SendMessage request1 = new SendMessage(chatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
+				.disableNotification(true);
+
+		sendMessage(bot,request1);
+	}
+	
+	public void sendMessage(TelegramBot bot, SendMessage request1) {
 		SendResponse sendResponse = bot.execute(request1);
 		boolean ok = sendResponse.isOk();
 		Message message = sendResponse.message();
 	}
+		
+	
 }

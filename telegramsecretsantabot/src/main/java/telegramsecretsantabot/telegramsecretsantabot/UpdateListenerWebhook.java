@@ -17,6 +17,7 @@ public class UpdateListenerWebhook {
 
 	private TelegramBot bot;
 	private Map<String, SecretSantaBot> santaBotsChatsMap = new HashMap<String, SecretSantaBot>();
+	private Map<String, SecretSantaBot> santaBotPersonalChatsMap = new HashMap<String, SecretSantaBot>();
 	// <chat id, SecretSantaBot>
 	private ArrayList<String> updateIdArray = new ArrayList<String>();
 
@@ -60,12 +61,14 @@ public class UpdateListenerWebhook {
 				if (isBotCommand(commandType)) {
 
 					System.out.println("chatId from updatelistenerwebhook:" + chatId);
-					
+
 					System.out.println("(message.chat():" + message.chat());
+
+					// Group chat
 					if (isFromGroupChat(message.chat().type().toString())) {
 						groupChatId = chatId;
 						if (isStartGameCommand(msgText)) {
-							
+
 							if (santaBotsChatsMap.get(groupChatId) != null) {
 								// duplicate /startgame command, terminates previous session.
 								santaBotsChatsMap.get(groupChatId).update(upd);
@@ -74,12 +77,17 @@ public class UpdateListenerWebhook {
 								// /startgame, new session new secretSantaBot
 								SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, groupChatId);
 								santaBotsChatsMap.put(groupChatId, secretSantaBot);
+								secretSantaBot.update(upd);
 							}
 						}
 					} else {
-						// send update to the group chat's santabot
-						if (santaBotsChatsMap.get(chatId) != null) {
+					// Personal Chat
+						if (santaBotPersonalChatsMap.get(chatId) != null) {
 							santaBotsChatsMap.get(chatId).update(upd);
+						} else {
+							SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, groupChatId);
+							santaBotPersonalChatsMap.put(chatId, secretSantaBot);
+							secretSantaBot.update(upd);
 						}
 					}
 

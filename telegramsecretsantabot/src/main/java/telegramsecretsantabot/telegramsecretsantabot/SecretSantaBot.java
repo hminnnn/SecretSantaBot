@@ -117,9 +117,9 @@ public class SecretSantaBot {
 		int reply = 0;
 
 		// get chat ids
-		if (messageChatType.equalsIgnoreCase("group") || messageChatType.equalsIgnoreCase("supergroup")) {
+		if (isFromGroupChat(messageChatType)) {
 			groupChatId = chatId;
-		} else if (messageChatType.equalsIgnoreCase("private")) {
+		} else if (isPrivateChat(messageChatType)) {
 			individualChatId = chatId;
 		}
 		System.out.println("groupChatId:" + groupChatId);
@@ -130,23 +130,31 @@ public class SecretSantaBot {
 		}
 		
 		if (isStartCommand(msgText)) {
-			// get participant details
-			User participant = message.from();
-			String participantName = getParticipantName(participant);
-			String participantUserId = getParticipantId(participant);
-
-			if (participantIdNameMap.get(participantUserId) != null) {
-				System.out.println("dupe participant");
-				replyMsg.duplicateParticipant(bot, individualChatId, participantName);
+			// Can only /start from a private chat
+			if (isFromGroupChat(messageChatType)) {
+				replyMsg.invalidStartCommand(bot, chatId);
 			} else {
-				System.out.println("add participant");
-				participantIdNameMap.put(participantUserId, participantName);
-				userChatIdMap.put(participantUserId, individualChatId);
-				replyMsg.eachParticipantInitCommand(bot, individualChatId, groupChatName);
+				
+				// get participant details
+				User participant = message.from();
+				String participantName = getParticipantName(participant);
+				String participantUserId = getParticipantId(participant);
 
-				System.out.println("joinMsgId:" + joinMsgId);
-				replyMsg.editJoinMainMessage(bot, groupChatId, joinMsgId, participantIdNameMap);
+				if (participantIdNameMap.get(participantUserId) != null) {
+					System.out.println("dupe participant");
+					replyMsg.duplicateParticipant(bot, individualChatId, participantName);
+				} else {
+					System.out.println("add participant");
+					participantIdNameMap.put(participantUserId, participantName);
+					userChatIdMap.put(participantUserId, individualChatId);
+					replyMsg.eachParticipantInitCommand(bot, individualChatId, groupChatName);
+
+					System.out.println("joinMsgId:" + joinMsgId);
+					replyMsg.editJoinMainMessage(bot, groupChatId, joinMsgId, participantIdNameMap);
+				}
 			}
+			
+			
 		}
 		
 		if (isInvalidStartCommand(msgText)) {
@@ -188,6 +196,15 @@ public class SecretSantaBot {
 			return true;
 		}
 		return false;
+	}
+	
+	private boolean isPrivateChat(String messageChatType) {
+		return messageChatType.equalsIgnoreCase("private");
+	}
+	
+	private boolean isFromGroupChat(String messageChatType) {
+		return messageChatType.equalsIgnoreCase("group") || messageChatType.equalsIgnoreCase("supergroup");
+
 	}
 
 	private String getParticipantName(User participant) {
