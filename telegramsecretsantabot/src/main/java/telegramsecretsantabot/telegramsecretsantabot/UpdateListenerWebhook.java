@@ -36,8 +36,6 @@ public class UpdateListenerWebhook {
 			// ignore messages of the same id
 		} else {
 			updateIdArray.add(updateId);
-//			System.out.println("------------New Message----------");
-//			System.out.println("upd:" + upd);
 			processNewUpdate(upd);
 		}
 	}
@@ -45,7 +43,6 @@ public class UpdateListenerWebhook {
 	private void processNewUpdate(Update upd) {
 
 		Message message = upd.message();
-		// System.out.println("message:" + message);
 
 		CallbackQuery callbackQ = upd.callbackQuery();
 
@@ -63,7 +60,7 @@ public class UpdateListenerWebhook {
 					System.out.println("chatId from updatelistenerwebhook:" + chatId);
 
 					System.out.println("(message.chat():" + message.chat());
-					
+
 					System.out.println("groupChatId:" + groupChatId);
 
 					// Group chat
@@ -86,50 +83,28 @@ public class UpdateListenerWebhook {
 
 						// Find the group chat this person came from
 						String command = message.text();
-						
+
 						if (command.contains("/start")) {
-							System.out.println("command /start+groupid:" + command );
+							System.out.println("command /start+groupid:" + command);
 							String key = command.substring(6);
 							System.out.println("key:" + key);
 
-							if (santaBotsChatsMap.containsKey(key)) {
+							if (santaBotsChatsMap.containsKey(key.trim())) {
 								santaBotsChatsMap.get(key).update(upd);
+								return;
 							}
-						} else {
+
 							SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, chatId);
 							santaBotPersonalChatsMap.put(chatId, secretSantaBot);
 							secretSantaBot.update(upd);
-						}
-						
-					
-					}
 
-//					if (isStartGameCommand(msgText)) {
-//						groupChatId = chatId;
-//						if (santaBotsChatsMap.get(groupChatId) != null) {
-//							// duplicate /startgame command, terminates previous session.
-//							santaBotsChatsMap.get(groupChatId).update(upd);
-//							santaBotsChatsMap.remove(groupChatId);
-//						} else {
-//							// /startgame, new session new secretSantaBot
-//							SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, groupChatId);
-//							santaBotsChatsMap.put(groupChatId, secretSantaBot);
-//						}
-//
-//					} else {
-//						// send update to the group chat's santabot
-//						if (santaBotsChatsMap.get(groupChatId) != null) {
-//							santaBotsChatsMap.get(groupChatId).update(upd);
-//						}
-//					}
+						}
+					}
 
 				}
 
 			}
 		}
-//		else {
-//			System.out.println("Update message is null");
-//		}
 
 		// Buttons callback
 		if (callbackQ != null) {
@@ -167,7 +142,7 @@ public class UpdateListenerWebhook {
 		}
 		return false;
 	}
-	
+
 	private boolean isStartCommand(String command, String groupChatId) {
 		if (command.equals(("/start ") + groupChatId)) {
 			return true;
