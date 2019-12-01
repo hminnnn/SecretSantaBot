@@ -8,7 +8,7 @@ import com.pengrad.telegrambot.response.BaseResponse;
 
 public class TelegramMain {
 
-	// telegram token
+	// using update listener - didnt work when hosted..
 //	private static String token = System.getenv("ssTOKEN");
 
 //	public static void main(String[] args) {
@@ -38,10 +38,11 @@ public class TelegramMain {
 //		bot.setUpdatesListener(new UpdateListener(bot));
 //
 //	}
+	
+	
 
-	// use webhook
+	// using webhook
 	public static void main(String[] args) {
-		// TelegramBot bot = new TelegramBot(token);
 
 		// herokuapp url
 		final String appUrl = System.getenv("APP_URL");
@@ -60,18 +61,14 @@ public class TelegramMain {
 
 		for (MyBotHandler myBot : myBots) {
 			String token = myBot.getToken();
-			//System.out.println("token:" + token);
 			post("/" + token, myBot);
-
 			if (appUrl != null) {
 				BaseResponse response = myBot.getBot().execute(new SetWebhook().url(appUrl + "/" + token));
 				boolean ok = response.isOk();
 				System.out.println(response.description());
 				System.out.println(ok);
 			}
-
 		}
-
 		System.out.println("Bot ready");
 
 	}

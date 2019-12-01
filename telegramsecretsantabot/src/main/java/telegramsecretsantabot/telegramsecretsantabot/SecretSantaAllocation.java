@@ -7,6 +7,7 @@ public class SecretSantaAllocation {
 
 	private int[][] adjMatrix;
 	private int totalPlayers;
+	Random ran = new Random();
 
 	public SecretSantaAllocation(int size) {
 		totalPlayers = size;
@@ -107,7 +108,8 @@ public class SecretSantaAllocation {
 	}
 
 	private int getRandomNext(ArrayList<String> peopleList) {
-		int chosenOne = new Random().nextInt(peopleList.size());
+
+		int chosenOne = ran.nextInt(peopleList.size());
 		//System.out.println("chosenOne: " + chosenOne);
 		return Integer.parseInt(peopleList.get(chosenOne));
 	}

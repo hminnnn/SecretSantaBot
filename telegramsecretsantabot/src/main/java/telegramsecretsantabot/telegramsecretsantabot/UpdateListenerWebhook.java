@@ -16,7 +16,7 @@ import com.pengrad.telegrambot.model.User;
 public class UpdateListenerWebhook {
 
 	private TelegramBot bot;
-	private Map<String, SecretSantaBot> santaBotsChatsMap = new HashMap<String, SecretSantaBot>(); 
+	private Map<String, SecretSantaBot> santaBotsChatsMap = new HashMap<String, SecretSantaBot>();
 	// <chat id, SecretSantaBot>
 	private ArrayList<String> updateIdArray = new ArrayList<String>();
 
@@ -60,25 +60,45 @@ public class UpdateListenerWebhook {
 				if (isBotCommand(commandType)) {
 
 					System.out.println("chatId from updatelistenerwebhook:" + chatId);
+					if (isFromGroupChat(message.chat().type().toString())) {
 
-					if (isStartGameCommand(msgText) || isHelpCommand(msgText)) {
-						groupChatId = chatId;
-						if (santaBotsChatsMap.get(groupChatId) != null) { 
-							// duplicate /startgame command, terminates previous session.
-							santaBotsChatsMap.get(groupChatId).update(upd);
-							santaBotsChatsMap.remove(groupChatId);
-						} else {
-							// /startgame, new session new secretSantaBot
-							SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, groupChatId);
-							santaBotsChatsMap.put(groupChatId, secretSantaBot);
+						if (isStartGameCommand(msgText)) {
+							groupChatId = chatId;
+							if (santaBotsChatsMap.get(groupChatId) != null) {
+								// duplicate /startgame command, terminates previous session.
+								santaBotsChatsMap.get(groupChatId).update(upd);
+//								santaBotsChatsMap.remove(groupChatId);
+							} else {
+								// /startgame, new session new secretSantaBot
+								SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, groupChatId);
+								santaBotsChatsMap.put(groupChatId, secretSantaBot);
+							}
 						}
-						
 					} else {
 						// send update to the group chat's santabot
 						if (santaBotsChatsMap.get(groupChatId) != null) {
 							santaBotsChatsMap.get(groupChatId).update(upd);
 						}
 					}
+
+//					if (isStartGameCommand(msgText)) {
+//						groupChatId = chatId;
+//						if (santaBotsChatsMap.get(groupChatId) != null) {
+//							// duplicate /startgame command, terminates previous session.
+//							santaBotsChatsMap.get(groupChatId).update(upd);
+//							santaBotsChatsMap.remove(groupChatId);
+//						} else {
+//							// /startgame, new session new secretSantaBot
+//							SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, groupChatId);
+//							santaBotsChatsMap.put(groupChatId, secretSantaBot);
+//						}
+//
+//					} else {
+//						// send update to the group chat's santabot
+//						if (santaBotsChatsMap.get(groupChatId) != null) {
+//							santaBotsChatsMap.get(groupChatId).update(upd);
+//						}
+//					}
 
 				}
 
@@ -124,6 +144,12 @@ public class UpdateListenerWebhook {
 		}
 		return false;
 	}
+
+	private boolean isFromGroupChat(String messageChatType) {
+		return messageChatType.equalsIgnoreCase("group") || messageChatType.equalsIgnoreCase("supergroup");
+
+	}
+
 	private String getParticipantName(User participant) {
 		String participantName = "";
 		if (participant.firstName() != null && participant.firstName() != "") {

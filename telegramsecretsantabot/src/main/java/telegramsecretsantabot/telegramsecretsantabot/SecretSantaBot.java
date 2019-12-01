@@ -20,14 +20,11 @@ public class SecretSantaBot {
 	private String individualChatId;
 	private String chatId;
 
-	// private ArrayList<String> updateIdArray = new ArrayList<String>();
-	private Integer listMsgId;
+	private String personCreatedId;
 	private Integer joinMsgId;
-	// private boolean isNewListMsg;
 
 	private ReplyMessages replyMsg = new ReplyMessages();
 
-	private int secretSantaSize;
 	// <participant user Id, participant chat id >
 	private Map<String, String> userChatIdMap = new HashMap<String, String>();
 	private Map<String, String> participantIdNameMap = new HashMap<String, String>();
@@ -38,10 +35,16 @@ public class SecretSantaBot {
 		groupChatId = chatId;
 		participantIdNameMap = new HashMap<String, String>();
 		userChatIdMap = new HashMap<String, String>();
+		
 		System.out.println("---- New message in SecretSantaBot ---- ");
 		joinMsgId = replyMsg.createJoinMainMessage(bot, groupChatId, participantIdNameMap);
 		groupChatName = update.message().chat().title();
-				
+		
+		// get person who created list. only this person can press Finish.
+		System.out.println("find person who created list id:" + personCreatedId);
+		User participant = update.message().from();
+		personCreatedId = getParticipantId(participant);
+		
 		System.out.println("joinMsgId:" + joinMsgId);
 		System.out.println("groupChatId:" + groupChatId);
 	}
@@ -85,7 +88,6 @@ public class SecretSantaBot {
 		case "RemoveButtonCallback":
 			if (participantIdNameMap.containsKey(participantUserId)) {
 				participantIdNameMap.remove(participantUserId);
-
 				replyMsg.editJoinMainMessage(bot, groupChatId, joinMsgId, participantIdNameMap);
 			} else {
 				replyMsg.removeInvalidParticipant(bot, groupChatId, participantName);
@@ -96,19 +98,23 @@ public class SecretSantaBot {
 			if (participantIdNameMap.isEmpty() || participantIdNameMap.size() < 2) {
 				replyMsg.insufficientParticipants(bot, groupChatId);
 			} else {
-				replyMsg.finishButton(bot, groupChatId, joinMsgId, participantIdNameMap);
-				startSecretSantaAllocation();
+				if (participantUserId.equals(personCreatedId)) { // only creator can press finish
+					replyMsg.finishButton(bot, groupChatId, joinMsgId, participantIdNameMap);
+					startSecretSantaAllocation();
+				} else {
+					String creatorName = participantIdNameMap.get(personCreatedId);
+					replyMsg.invalidFinishButton(bot, chatId, creatorName);
+				}
 			}
-
 			break;
 		}
-
 	}
 
 	private void processMessage(Message message) {
 		String messageChatType = message.chat().type().toString();
 		String msgText = message.text();
 		chatId = message.chat().id().toString();
+		int reply = 0;
 
 		// get chat ids
 		if (messageChatType.equalsIgnoreCase("group") || messageChatType.equalsIgnoreCase("supergroup")) {
@@ -122,6 +128,7 @@ public class SecretSantaBot {
 		if (isHelpCommand(msgText)) {
 			replyMsg.helpCommand(bot, chatId);
 		}
+		
 		if (isStartCommand(msgText)) {
 			// get participant details
 			User participant = message.from();
@@ -141,9 +148,15 @@ public class SecretSantaBot {
 				replyMsg.editJoinMainMessage(bot, groupChatId, joinMsgId, participantIdNameMap);
 			}
 		}
+		
 		if (isInvalidStartCommand(msgText)) {
 			replyMsg.invalidJoin(bot, individualChatId, groupChatName);
 		}
+		
+		if (isStartGameCommand(msgText)) {
+			replyMsg.multipleStartGameCommand(bot, groupChatId, joinMsgId, participantIdNameMap);
+		}
+		
 	}
 
 	private boolean isHelpCommand(String command) {
@@ -163,6 +176,14 @@ public class SecretSantaBot {
 	
 	private boolean isInvalidStartCommand(String command) {
 		if (command.equals(("/start"))) {
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean isStartGameCommand(String command) {
+		if (command.contains("/startgame")) {
+			System.out.println("/startgame");
 			return true;
 		}
 		return false;
@@ -202,7 +223,6 @@ public class SecretSantaBot {
 		} else {
 			replyMsg.errorOccured(bot, chatId);
 		}
-
 	}
 
 	private Map<String, String> mapResultToUserId(int[][] mappingMatrix, ArrayList<String> participantIdList) {
@@ -216,7 +236,6 @@ public class SecretSantaBot {
 				}
 			}
 		}
-
 		return santaAllocationResult;
 	}
 
