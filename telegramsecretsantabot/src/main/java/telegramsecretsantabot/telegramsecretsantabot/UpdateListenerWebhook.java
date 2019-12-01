@@ -63,6 +63,8 @@ public class UpdateListenerWebhook {
 					System.out.println("chatId from updatelistenerwebhook:" + chatId);
 
 					System.out.println("(message.chat():" + message.chat());
+					
+					System.out.println("groupChatId:" + groupChatId);
 
 					// Group chat
 					if (isFromGroupChat(message.chat().type().toString())) {
@@ -81,6 +83,7 @@ public class UpdateListenerWebhook {
 						}
 					} else {
 						// Personal Chat
+						
 						SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, chatId);
 						santaBotPersonalChatsMap.put(chatId, secretSantaBot);
 						secretSantaBot.update(upd);

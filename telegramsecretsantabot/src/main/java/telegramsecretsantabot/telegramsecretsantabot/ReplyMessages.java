@@ -19,7 +19,7 @@ import com.pengrad.telegrambot.response.SendResponse;
 public class ReplyMessages {
 
 	public void eachParticipantInitCommand(TelegramBot bot, String chatId, String groupChatName) {
-//		System.out.println("eachParticipantInitCommand");
+
 		String msg = "You have successfully added yourself into the list in " + groupChatName;
 		SendMessage request1 = new SendMessage(chatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
 				.disableNotification(true);
@@ -28,12 +28,12 @@ public class ReplyMessages {
 	}
 
 	public Integer createJoinMainMessage(TelegramBot bot, String groupChatId,
-			Map<String, String> participantIdNameMap) {
+			Map<String, String> participantIdNameMap, String key) {
 
 //		System.out.println("createJoinMainMessage");
 
 		InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new InlineKeyboardButton[] {
-				new InlineKeyboardButton("Join").url("https://telegram.me/HMSantaBot?start=123456789asdfghjkl"),
+				new InlineKeyboardButton("Join").url("https://telegram.me/HMSantaBot?start="+key),
 				new InlineKeyboardButton("Un-Join").callbackData("RemoveButtonCallback"),
 				new InlineKeyboardButton("Finish!").callbackData("FinishButtonCallback") });
 

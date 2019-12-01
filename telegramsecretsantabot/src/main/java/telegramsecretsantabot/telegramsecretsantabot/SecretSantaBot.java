@@ -54,9 +54,11 @@ public class SecretSantaBot {
 		CallbackQuery callbackQ = upd.callbackQuery();
 		System.out.println("---- New message in SecretSantaBot ---- ");
 		if (message != null) {
+			System.out.println("---- message ---- ");
 			processMessage(message);
 		}
 		if (callbackQ != null) {
+			System.out.println("---- callback ---- ");
 			processCallbackQuery(callbackQ);
 		}
 
@@ -129,7 +131,7 @@ public class SecretSantaBot {
 			replyMsg.helpCommand(bot, chatId);
 		}
 
-		else if (isStartCommand(msgText)) {
+		else if (isStartCommand(msgText, groupChatId)) {
 			// Can only /start from a private chat
 			if (isFromGroupChat(messageChatType)) {
 				replyMsg.invalidStartCommand(bot, chatId);
@@ -159,7 +161,12 @@ public class SecretSantaBot {
 		else if (isStartGameCommand(msgText)) {
 
 			if (isFromGroupChat(messageChatType)) {
-				joinMsgId = replyMsg.createJoinMainMessage(bot, groupChatId, participantIdNameMap);
+				if (joinMsgId != null) {
+					System.out.println("joinMsgId to remove:" + joinMsgId);
+					replyMsg.multipleStartGameCommand(bot, groupChatId, joinMsgId, participantIdNameMap);
+				}
+				String key = groupChatId;
+				joinMsgId = replyMsg.createJoinMainMessage(bot, groupChatId, participantIdNameMap, key);
 				groupChatName = update.message().chat().title();
 
 				// get person who created list. only this person can press Finish.
@@ -177,8 +184,7 @@ public class SecretSantaBot {
 		}
 
 		else if (isStartGameCommand(msgText)) {
-			System.out.println("joinMsgId to remove:" + joinMsgId);
-			replyMsg.multipleStartGameCommand(bot, groupChatId, joinMsgId, participantIdNameMap);
+			
 		} else {
 
 			replyMsg.invalidCommand(bot, chatId);
@@ -194,8 +200,8 @@ public class SecretSantaBot {
 		return false;
 	}
 
-	private boolean isStartCommand(String command) {
-		if (command.equals(("/start ") + startKey)) {
+	private boolean isStartCommand(String command, String groupChatId) {
+		if (command.equals(("/start ") + groupChatId)) {
 			return true;
 		}
 		return false;
