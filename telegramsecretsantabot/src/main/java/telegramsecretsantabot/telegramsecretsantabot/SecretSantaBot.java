@@ -166,6 +166,7 @@ public class SecretSantaBot {
 					replyMsg.multipleStartGameCommand(bot, groupChatId, joinMsgId, participantIdNameMap);
 				}
 				String key = groupChatId;
+				participantIdNameMap = new HashMap<String, String>();
 				joinMsgId = replyMsg.createJoinMainMessage(bot, groupChatId, participantIdNameMap, key);
 				groupChatName = update.message().chat().title();
 

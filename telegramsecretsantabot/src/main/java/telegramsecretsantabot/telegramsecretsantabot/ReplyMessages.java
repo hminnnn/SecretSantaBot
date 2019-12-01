@@ -199,7 +199,7 @@ public class ReplyMessages {
 
 		// remove inline buttons from the old message
 		EditMessageText editInlineMessageText = new EditMessageText(groupChatId, joinMsgId,
-				"<b>Secret Santa Game</b> \n" + "Who's in: " + participantIdNameMap.size() + "\n"
+				"<b>Secret Santa Game - Terminated</b> \n" + "Who's in: " + participantIdNameMap.size() + "\n"
 						+ getParticipantsNameString(participantIdNameMap)).parseMode(ParseMode.HTML)
 								.disableWebPagePreview(true);
 		BaseResponse baseResponse = bot.execute(editInlineMessageText);
