@@ -24,16 +24,16 @@ public class ReplyMessages {
 		SendMessage request1 = new SendMessage(chatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
 				.disableNotification(true);
 
-		sendMessage(bot,request1);
+		sendMessage(bot, request1);
 	}
 
-	public Integer createJoinMainMessage(TelegramBot bot, String groupChatId,
-			Map<String, String> participantIdNameMap, String key) {
+	public Integer createJoinMainMessage(TelegramBot bot, String groupChatId, Map<String, String> participantIdNameMap,
+			String key) {
 
 //		System.out.println("createJoinMainMessage");
 
 		InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new InlineKeyboardButton[] {
-				new InlineKeyboardButton("Join").url("https://telegram.me/HMSantaBot?start="+key),
+				new InlineKeyboardButton("Join").url("https://telegram.me/HMSantaBot?start=" + key),
 				new InlineKeyboardButton("Un-Join").callbackData("RemoveButtonCallback"),
 				new InlineKeyboardButton("Finish!").callbackData("FinishButtonCallback") });
 
@@ -58,7 +58,7 @@ public class ReplyMessages {
 		System.out.println("joinMsgId:" + msgId);
 
 		InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new InlineKeyboardButton[] {
-				new InlineKeyboardButton("Join").url("https://telegram.me/HMSantaBot?start="+key),
+				new InlineKeyboardButton("Join").url("https://telegram.me/HMSantaBot?start=" + key),
 				new InlineKeyboardButton("Un-Join").callbackData("RemoveButtonCallback"),
 				new InlineKeyboardButton("Finish!").callbackData("FinishButtonCallback") });
 
@@ -66,7 +66,7 @@ public class ReplyMessages {
 				"<b>Secret Santa Game</b> \n" + "Who's in: " + participantIdNameMap.size() + "\n"
 						+ getParticipantsNameString(participantIdNameMap)).parseMode(ParseMode.HTML)
 								.disableWebPagePreview(true).replyMarkup(inlineKeyboard);
-		
+
 		BaseResponse sendResponse = bot.execute(editInlineMessageText);
 		boolean ok = sendResponse.isOk();
 		String message = sendResponse.description();
@@ -81,7 +81,7 @@ public class ReplyMessages {
 		SendMessage request1 = new SendMessage(chatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
 				.disableNotification(true);
 
-		sendMessage(bot,request1);
+		sendMessage(bot, request1);
 		// System.out.print("sent msg: " + message);
 	}
 
@@ -92,7 +92,7 @@ public class ReplyMessages {
 		SendMessage request1 = new SendMessage(chatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
 				.disableNotification(true);
 
-		sendMessage(bot,request1);
+		sendMessage(bot, request1);
 		// System.out.print("sent msg: " + message);
 
 	}
@@ -101,7 +101,7 @@ public class ReplyMessages {
 		SendMessage request1 = new SendMessage(chatId, "Command unsuccessful. Error Occured!").parseMode(ParseMode.HTML)
 				.disableWebPagePreview(true).disableNotification(true);
 
-		sendMessage(bot,request1);
+		sendMessage(bot, request1);
 	}
 
 	public void invalidJoin(TelegramBot bot, String chatId, String groupChatName) {
@@ -109,7 +109,7 @@ public class ReplyMessages {
 		SendMessage request1 = new SendMessage(chatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
 				.disableNotification(true);
 
-		sendMessage(bot,request1);
+		sendMessage(bot, request1);
 	}
 
 	public void insufficientParticipants(TelegramBot bot, String chatId) {
@@ -119,7 +119,7 @@ public class ReplyMessages {
 		SendMessage request1 = new SendMessage(chatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
 				.disableNotification(true);
 
-		sendMessage(bot,request1);
+		sendMessage(bot, request1);
 		// System.out.println("sent msg: " + message);
 	}
 
@@ -132,7 +132,7 @@ public class ReplyMessages {
 						+ "SecretSantaBot will drop each of you a message on who your Secret Santee is!")
 								.parseMode(ParseMode.HTML).disableWebPagePreview(true).disableNotification(true);
 
-		sendMessage(bot,request1);
+		sendMessage(bot, request1);
 
 		System.out.println("remove Inline buttons from joinMsgId:" + joinMsgId);
 
@@ -149,17 +149,17 @@ public class ReplyMessages {
 	public void helpCommand(TelegramBot bot, String chatId) {
 		System.out.println("helpCommand");
 
-		String helpMsg = "/startgame in a group chat to start a new session! \n"
-				+ "Press <b>Join</b> to add your name to the list. SecretSantaBot will /start a chat with you \n"
+		String helpMsg = "Help is here! \n" + "Use /startgame in a group chat to start a new session! \n"
+				+ "Press <b>Join</b> to join the list. SecretSantaBot will start a chat with you \n"
 				+ "Press <b>Un-Join</b> to remove yourself from the list \n"
-				+ "Only the creator can press <b>Finish</b> once everyone's name is up \n"
+				+ "Only the creator can press <b>Finish</b> \n"
 				+ "SecretSantaBot will then message everyone individually to let them know who their Secret Santee is \n"
 				+ "\n" + "Merry Christmas! \n";
 
 		SendMessage request1 = new SendMessage(chatId, helpMsg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
 				.disableNotification(true);
 
-		sendMessage(bot,request1);
+		sendMessage(bot, request1);
 		// System.out.print("sent msg: " + message);
 	}
 
@@ -171,7 +171,7 @@ public class ReplyMessages {
 		SendMessage request1 = new SendMessage(chatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
 				.disableNotification(true);
 
-		sendMessage(bot,request1);
+		sendMessage(bot, request1);
 		// System.out.print("sent msg: " + message);
 	}
 
@@ -186,14 +186,13 @@ public class ReplyMessages {
 
 	public void multipleStartGameCommand(TelegramBot bot, String groupChatId, Integer joinMsgId,
 			Map<String, String> participantIdNameMap) {
-		System.out.println("multipleStartGameCommand");
 
 		String msg = "Only one Secret Santa game can be on. The previous session will now be terminated.";
 
 		SendMessage request1 = new SendMessage(groupChatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
 				.disableNotification(true);
 
-		sendMessage(bot,request1);
+		sendMessage(bot, request1);
 
 		System.out.println("remove Inline buttons from joinMsgId:" + joinMsgId);
 
@@ -207,46 +206,44 @@ public class ReplyMessages {
 	}
 
 	public void invalidFinishButton(TelegramBot bot, String chatId, String creatorName) {
-		System.out.println("invalidFinishButton");
 
 		String msg = "Only the creator of the list " + creatorName + " is able to press Finish.";
 		SendMessage request1 = new SendMessage(chatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
 				.disableNotification(true);
 
-		sendMessage(bot,request1);
+		sendMessage(bot, request1);
 
 	}
-	
+
 	public void invalidStartGameCommand(TelegramBot bot, String chatId) {
 		String msg = "Invalid start game command. Please /startgame only from a group chat.";
 		SendMessage request1 = new SendMessage(chatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
 				.disableNotification(true);
 
-		sendMessage(bot,request1);
+		sendMessage(bot, request1);
 	}
-	
+
 	public void invalidStartCommand(TelegramBot bot, String chatId) {
 		String msg = "Invalid start command. Please use /startgame when in a group chat.";
 		SendMessage request1 = new SendMessage(chatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
 				.disableNotification(true);
 
-		sendMessage(bot,request1);
+		sendMessage(bot, request1);
 	}
-	
+
 	public void invalidCommand(TelegramBot bot, String chatId) {
 //		System.out.println("eachParticipantInitCommand");
 		String msg = "Invalid command. ";
 		SendMessage request1 = new SendMessage(chatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
 				.disableNotification(true);
 
-		sendMessage(bot,request1);
+		sendMessage(bot, request1);
 	}
-	
+
 	public void sendMessage(TelegramBot bot, SendMessage request1) {
 		SendResponse sendResponse = bot.execute(request1);
 		boolean ok = sendResponse.isOk();
 		Message message = sendResponse.message();
 	}
-		
-	
+
 }
