@@ -87,9 +87,10 @@ public class UpdateListenerWebhook {
 						if (command.contains("/start")) {
 							System.out.println("command /start+groupid:" + command);
 							String key = command.substring(6);
+							key = key.trim();
 							System.out.println("key:" + key);
 
-							if (santaBotsChatsMap.containsKey(key.trim())) {
+							if (santaBotsChatsMap.containsKey(key)) {
 								santaBotsChatsMap.get(key).update(upd);
 								return;
 							}
