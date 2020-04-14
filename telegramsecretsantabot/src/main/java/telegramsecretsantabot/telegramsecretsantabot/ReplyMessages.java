@@ -187,6 +187,7 @@ public class ReplyMessages {
 	public void multipleStartGameCommand(TelegramBot bot, String groupChatId, Integer joinMsgId,
 			Map<String, String> participantIdNameMap) {
 
+
 		String msg = "Only one Secret Santa game can be on. The previous session will now be terminated.";
 
 		SendMessage request1 = new SendMessage(groupChatId, msg).parseMode(ParseMode.HTML).disableWebPagePreview(true)
@@ -194,11 +195,14 @@ public class ReplyMessages {
 
 		sendMessage(bot, request1);
 
+
 		System.out.println("remove Inline buttons from joinMsgId:" + joinMsgId);
 
 		// remove inline buttons from the old message
 		EditMessageText editInlineMessageText = new EditMessageText(groupChatId, joinMsgId,
+
 				"<b>Secret Santa Game - Terminated</b> \n" + "Who's in: " + participantIdNameMap.size() + "\n"
+
 						+ getParticipantsNameString(participantIdNameMap)).parseMode(ParseMode.HTML)
 								.disableWebPagePreview(true);
 		BaseResponse baseResponse = bot.execute(editInlineMessageText);
@@ -241,6 +245,7 @@ public class ReplyMessages {
 	}
 
 	public void sendMessage(TelegramBot bot, SendMessage request1) {
+
 		SendResponse sendResponse = bot.execute(request1);
 		boolean ok = sendResponse.isOk();
 		Message message = sendResponse.message();

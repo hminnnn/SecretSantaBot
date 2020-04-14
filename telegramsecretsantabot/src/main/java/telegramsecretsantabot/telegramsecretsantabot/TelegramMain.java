@@ -40,6 +40,7 @@ public class TelegramMain {
 			System.out.println("appUrl is null, Bot not ready");
 		}
 
+
 	}
 
 }

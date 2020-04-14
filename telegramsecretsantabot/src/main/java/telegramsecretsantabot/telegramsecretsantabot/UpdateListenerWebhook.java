@@ -21,9 +21,11 @@ public class UpdateListenerWebhook {
 	private static final Logger logger = LogManager.getLogger(UpdateListenerWebhook.class);
 
 	private TelegramBot bot;
+
 	private Map<String, SecretSantaBot> santaBotsChatsMap = new HashMap<String, SecretSantaBot>();
 	private Map<String, SecretSantaBot> santaBotPersonalChatsMap = new HashMap<String, SecretSantaBot>();
 	private ArrayList<String> updateIdArray = new ArrayList<String>();
+
 
 	public UpdateListenerWebhook(TelegramBot bot) {
 		this.bot = bot;
@@ -55,6 +57,7 @@ public class UpdateListenerWebhook {
 	 */
 	private SecretSantaBot extractChatIds(Update upd) {
 
+
 		// Buttons Callback
 		CallbackQuery callbackQ = upd.callbackQuery();
 		if (callbackQ != null) {
@@ -66,6 +69,7 @@ public class UpdateListenerWebhook {
 
 		System.out.println("------------ Message Recevied -------------");
 		MessageEntity[] msgEntities = message.entities();
+
 
 		if (msgEntities != null && msgEntities.length > 0) {
 			String commandType = msgEntities[0].type().toString();
@@ -87,6 +91,7 @@ public class UpdateListenerWebhook {
 						SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, groupChatId);
 						santaBotsChatsMap.put(groupChatId, secretSantaBot);
 						return secretSantaBot;
+
 
 					}
 					// Personal Chat - To press Start button to join the list.
@@ -112,6 +117,7 @@ public class UpdateListenerWebhook {
 				}
 
 			}
+
 
 		}
 		return null;

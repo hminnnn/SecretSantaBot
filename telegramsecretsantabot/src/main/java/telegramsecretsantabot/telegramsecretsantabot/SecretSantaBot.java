@@ -36,6 +36,7 @@ public class SecretSantaBot {
 		participantIdNameMap = new HashMap<String, String>();
 		userChatIdMap = new HashMap<String, String>();
 
+
 		System.out.println("---- New message in SecretSantaBot ---- ");
 //		joinMsgId = replyMsg.createJoinMainMessage(bot, groupChatId, participantIdNameMap);
 //		groupChatName = update.message().chat().title();
@@ -47,6 +48,7 @@ public class SecretSantaBot {
 //		
 //		System.out.println("joinMsgId:" + joinMsgId);
 //		System.out.println("groupChatId:" + groupChatId);
+
 	}
 
 	public void update(Update upd) {
@@ -90,6 +92,7 @@ public class SecretSantaBot {
 			if (participantIdNameMap.containsKey(participantUserId)) {
 				participantIdNameMap.remove(participantUserId);
 				replyMsg.editJoinMainMessage(bot, groupChatId, joinMsgId, participantIdNameMap, groupChatId);
+
 			} else {
 				replyMsg.removeInvalidParticipant(bot, groupChatId, participantName);
 			}
@@ -190,6 +193,7 @@ public class SecretSantaBot {
 			replyMsg.invalidCommand(bot, chatId);
 		}
 
+
 	}
 
 	private boolean isHelpCommand(String command) {
@@ -213,6 +217,7 @@ public class SecretSantaBot {
 		}
 		return false;
 	}
+	
 
 	private boolean isStartGameCommand(String command) {
 		if (command.contains("/startgame")) {
