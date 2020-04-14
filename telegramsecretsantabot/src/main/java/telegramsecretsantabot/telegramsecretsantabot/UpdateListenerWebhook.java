@@ -23,7 +23,6 @@ public class UpdateListenerWebhook {
 	private Map<String, SecretSantaBot> santaBotPersonalChatsMap = new HashMap<String, SecretSantaBot>();
 	private ArrayList<String> updateIdArray = new ArrayList<String>();
 
-
 	public UpdateListenerWebhook(TelegramBot bot) {
 		this.bot = bot;
 	}
@@ -54,7 +53,6 @@ public class UpdateListenerWebhook {
 	 */
 	private SecretSantaBot extractChatIds(Update upd) {
 
-
 		// Buttons Callback
 		CallbackQuery callbackQ = upd.callbackQuery();
 		if (callbackQ != null) {
@@ -66,7 +64,6 @@ public class UpdateListenerWebhook {
 
 		System.out.println("------------ Message Recevied -------------");
 		MessageEntity[] msgEntities = message.entities();
-
 
 		if (msgEntities != null && msgEntities.length > 0) {
 			String commandType = msgEntities[0].type().toString();
@@ -82,26 +79,25 @@ public class UpdateListenerWebhook {
 					if (santaBotsChatsMap.get(groupChatId) != null) {
 						// 14/04/2020 - Saves current ongoing session in map. Once finish button is
 						// pressed, remove from list (possible?)
-
+						return santaBotsChatsMap.get(groupChatId);
 					} else {
 						// startgame, new session new secretSantaBot
 						SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, groupChatId);
 						santaBotsChatsMap.put(groupChatId, secretSantaBot);
 						return secretSantaBot;
 
-
 					}
 					// Personal Chat - To press Start button to join the list.
 				} else {
 					String chatId = message.chat().id().toString();
-		
+
 					String command = message.text();
 
 					if (command.contains("/start")) {
 						// Find the group chat this person came from
 						String groupChatId = isValidJoinCommand(command);
-					
-						if (groupChatId == null) {	// Invalid start from Bot chat 
+
+						if (groupChatId == null) { // Invalid start from Bot chat
 							SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, chatId);
 							santaBotPersonalChatsMap.put(chatId, secretSantaBot);
 							return secretSantaBot;
@@ -114,7 +110,6 @@ public class UpdateListenerWebhook {
 				}
 
 			}
-
 
 		}
 		return null;
@@ -140,7 +135,7 @@ public class UpdateListenerWebhook {
 			key = key.trim();
 			System.out.println("Join Button from this groupchat: " + key);
 			return key;
-			
+
 		}
 		return null;
 	}
@@ -148,6 +143,5 @@ public class UpdateListenerWebhook {
 	private boolean isFromGroupChat(String messageChatType) {
 		return messageChatType.equalsIgnoreCase("group") || messageChatType.equalsIgnoreCase("supergroup");
 	}
-
 
 }

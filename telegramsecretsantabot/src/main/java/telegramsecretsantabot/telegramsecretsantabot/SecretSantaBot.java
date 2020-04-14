@@ -192,9 +192,9 @@ public class SecretSantaBot {
 			groupChatName = update.message().chat().title();
 
 			// get person who created list. only this person can press Finish.
-			logger.info("find person who created list id:" + personCreatedId);
 			User participant = update.message().from();
 			personCreatedId = getParticipantId(participant);
+			logger.info("find person who created list id:" + personCreatedId);
 			return;
 		}
 		replyMsg.invalidCommand(bot, chatId);
