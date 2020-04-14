@@ -20,6 +20,7 @@ public class TelegramMain {
 		final String portNumber = System.getenv("PORT");
 		logger.info("port:" + portNumber);
 		logger.info("appUrl:" + appUrl);
+		System.out.println("port:" + portNumber);
 
 		if (portNumber != null) {
 			port(Integer.parseInt(portNumber));
