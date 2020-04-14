@@ -95,17 +95,19 @@ public class UpdateListenerWebhook {
 
 					if (command.contains("/start")) {
 						// Find the group chat this person came from
-						String groupChatId = isValidJoinCommand(command);
+						String groupChatId = getGroupChatIdIfValidStartCommand(command);
 
-						if (groupChatId == null) { // Invalid start from Bot chat
-							SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, chatId);
-							santaBotPersonalChatsMap.put(chatId, secretSantaBot);
-							return secretSantaBot;
-						}
 						// Valid start from a Group chat
-						if (santaBotsChatsMap.containsKey(groupChatId)) {
+						if (groupChatId != null && santaBotsChatsMap.containsKey(groupChatId)) {
 							return santaBotsChatsMap.get(groupChatId);
 						}
+					} 
+					if (santaBotPersonalChatsMap.containsKey(chatId)) {
+						return santaBotPersonalChatsMap.get(chatId);
+					} else {
+						SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, chatId);
+						santaBotPersonalChatsMap.put(chatId, secretSantaBot);
+						return secretSantaBot;
 					}
 				}
 
@@ -129,7 +131,7 @@ public class UpdateListenerWebhook {
 		return false;
 	}
 
-	private String isValidJoinCommand(String command) {
+	private String getGroupChatIdIfValidStartCommand(String command) {
 		if (command.contains("/start") && command.length() > 7) {
 			String key = command.substring(6);
 			key = key.trim();

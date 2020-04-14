@@ -158,7 +158,7 @@ public class SecretSantaBot {
 			String participantName = getParticipantName(participant);
 			String participantUserId = getParticipantId(participant);
 
-			if (participantIdNameMap.get(participantUserId) != null) {
+			if (participantIdNameMap.containsKey(participantUserId)) {
 				replyMsg.duplicateParticipant(bot, individualChatId, participantName, groupChatName);
 			} else {
 				participantIdNameMap.put(participantUserId, participantName);
