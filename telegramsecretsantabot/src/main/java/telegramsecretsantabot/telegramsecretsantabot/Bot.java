@@ -16,7 +16,6 @@ public class Bot extends MyBotHandler {
 		} else {
 			System.out.println("onWebhookUpdate update is null!?!?!??");
 		}
-        
     }
 
     @Override

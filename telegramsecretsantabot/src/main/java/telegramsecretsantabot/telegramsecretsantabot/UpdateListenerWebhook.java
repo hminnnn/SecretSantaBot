@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.CallbackQuery;
@@ -15,14 +18,12 @@ import com.pengrad.telegrambot.model.User;
 
 public class UpdateListenerWebhook {
 
+	private static final Logger logger = LogManager.getLogger(UpdateListenerWebhook.class);
+
 	private TelegramBot bot;
 	private Map<String, SecretSantaBot> santaBotsChatsMap = new HashMap<String, SecretSantaBot>();
 	private Map<String, SecretSantaBot> santaBotPersonalChatsMap = new HashMap<String, SecretSantaBot>();
-	// <chat id, SecretSantaBot>
 	private ArrayList<String> updateIdArray = new ArrayList<String>();
-
-	private String groupChatId;
-	private String chatId;
 
 	public UpdateListenerWebhook(TelegramBot bot) {
 		this.bot = bot;
@@ -32,93 +33,95 @@ public class UpdateListenerWebhook {
 		Update upd = update;
 		String updateId = upd.updateId().toString();
 
-		if (updateIdArray.contains(updateId)) {
-			// ignore messages of the same id
-		} else {
+		// ignore repeated updates of same id
+		if (!updateIdArray.contains(updateId)) {
 			updateIdArray.add(updateId);
-			processNewUpdate(upd);
+			processUpdate(upd);
 		}
 	}
 
-	private void processNewUpdate(Update upd) {
+	private void processUpdate(Update upd) {
 
+		SecretSantaBot secretSantaBot = extractChatIds(upd);
+		if (secretSantaBot != null) {
+			secretSantaBot.update(upd);
+		} else {
+			System.out.println("ERROR: SECRETSANTABOT IS NULL AT PROCESSUPDATE");
+		}
+	}
+
+	/*
+	 * Extract chatIds to store in map before proceeding to process the message
+	 */
+	private SecretSantaBot extractChatIds(Update upd) {
+
+		// Buttons Callback
+		CallbackQuery callbackQ = upd.callbackQuery();
+		if (callbackQ != null) {
+			return extractChatIdsFromCallbackQ(upd, callbackQ);
+		}
+
+		// Normal Message
 		Message message = upd.message();
 
-		CallbackQuery callbackQ = upd.callbackQuery();
+		System.out.println("------------ Message Recevied -------------");
+		MessageEntity[] msgEntities = message.entities();
 
-		// normal text commands
-		if (message != null) {
-			MessageEntity[] msgEntities = message.entities();
-			String msgText = message.text();
+		if (msgEntities != null && msgEntities.length > 0) {
+			String commandType = msgEntities[0].type().toString();
 
-			chatId = message.chat().id().toString();
+			if (isBotCommand(commandType)) {
 
-			if (msgEntities != null && msgEntities.length > 0) {
-				String commandType = msgEntities[0].type().toString();
-				if (isBotCommand(commandType)) {
+				System.out.println("(message.chat():" + message.chat());
 
-					System.out.println("chatId from updatelistenerwebhook:" + chatId);
+				// Group chat
+				if (isFromGroupChat(message.chat().type().toString())) {
+					String groupChatId = message.chat().id().toString();
 
-					System.out.println("(message.chat():" + message.chat());
+					if (santaBotsChatsMap.get(groupChatId) != null) {
+						// 14/04/2020 - Saves current ongoing session in map. Once finish button is
+						// pressed, remove from list (possible?)
 
-					System.out.println("groupChatId:" + groupChatId);
-
-					// Group chat
-					if (isFromGroupChat(message.chat().type().toString())) {
-						groupChatId = chatId;
-
-						if (santaBotsChatsMap.get(groupChatId) != null) {
-							// duplicate /startgame command, terminates previous session.
-							santaBotsChatsMap.get(groupChatId).update(upd);
-//								santaBotsChatsMap.remove(groupChatId);
-						} else {
-							// /startgame, new session new secretSantaBot
-							SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, groupChatId);
-							santaBotsChatsMap.put(groupChatId, secretSantaBot);
-							secretSantaBot.update(upd);
-
-						}
-						// Personal Chat
 					} else {
+						// startgame, new session new secretSantaBot
+						SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, groupChatId);
+						santaBotsChatsMap.put(groupChatId, secretSantaBot);
+						return secretSantaBot;
 
+					}
+					// Personal Chat - To press Start button to join the list.
+				} else {
+					String chatId = message.chat().id().toString();
+		
+					String command = message.text();
+
+					if (command.contains("/start")) {
 						// Find the group chat this person came from
-						String command = message.text();
-
-						if (command.contains("/start")) {
-							System.out.println("command /start+groupid:" + command);
-							String key = command.substring(6);
-							key = key.trim();
-							System.out.println("key:" + key);
-
-							if (santaBotsChatsMap.containsKey(key)) {
-								santaBotsChatsMap.get(key).update(upd);
-								return;
-							}
-
+						String groupChatId = isValidJoinCommand(command);
+					
+						if (groupChatId == null) {	// Invalid start from Bot chat 
 							SecretSantaBot secretSantaBot = new SecretSantaBot(bot, upd, chatId);
 							santaBotPersonalChatsMap.put(chatId, secretSantaBot);
-							secretSantaBot.update(upd);
-
+							return secretSantaBot;
+						}
+						// Valid start from a Group chat
+						if (santaBotsChatsMap.containsKey(groupChatId)) {
+							return santaBotsChatsMap.get(groupChatId);
 						}
 					}
-
 				}
 
 			}
-		}
-
-		// Buttons callback
-		if (callbackQ != null) {
-
-			groupChatId = callbackQ.message().chat().id().toString();
-			System.out.println("callback command from groupChatId: " + groupChatId);
-
-			// send update to the group chat's santabot
-			if (santaBotsChatsMap.get(groupChatId) != null) {
-				santaBotsChatsMap.get(groupChatId).update(upd);
-			}
 
 		}
+		return null;
+	}
+
+	private SecretSantaBot extractChatIdsFromCallbackQ(Update upd, CallbackQuery callbackQ) {
+		String groupChatId = callbackQ.message().chat().id().toString();
+		System.out.println("callback command from groupChatId: " + groupChatId);
+
+		return santaBotsChatsMap.get(groupChatId);
 	}
 
 	private boolean isBotCommand(String command) {
@@ -128,45 +131,20 @@ public class UpdateListenerWebhook {
 		return false;
 	}
 
-	private boolean isStartGameCommand(String command) {
-		if (command.contains("/startgame")) {
-			System.out.println("/startgame");
-			return true;
+	private String isValidJoinCommand(String command) {
+		if (command.contains("/start") && command.length() > 7) {
+			String key = command.substring(6);
+			key = key.trim();
+			System.out.println("Join Button from this groupchat: " + key);
+			return key;
+			
 		}
-		return false;
-	}
-
-	private boolean isHelpCommand(String command) {
-		if (command.contains("/help")) {
-			System.out.println("/help");
-			return true;
-		}
-		return false;
-	}
-
-	private boolean isStartCommand(String command, String groupChatId) {
-		if (command.equals(("/start ") + groupChatId)) {
-			return true;
-		}
-		return false;
+		return null;
 	}
 
 	private boolean isFromGroupChat(String messageChatType) {
 		return messageChatType.equalsIgnoreCase("group") || messageChatType.equalsIgnoreCase("supergroup");
-
 	}
 
-	private String getParticipantName(User participant) {
-		String participantName = "";
-		if (participant.firstName() != null && participant.firstName() != "") {
-			participantName = participant.firstName();
-		} else if (participant.lastName() != null && participant.lastName() != "") {
-			participantName = participant.lastName();
-		} else if (participant.username() != null && participant.username() != "") {
-			participantName = participant.username();
-		} else {
-			participantName = participant.id().toString() + "has no name...";
-		}
-		return participantName;
-	}
+
 }

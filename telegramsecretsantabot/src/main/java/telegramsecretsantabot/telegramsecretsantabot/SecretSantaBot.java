@@ -52,7 +52,6 @@ public class SecretSantaBot {
 	public void update(Update upd) {
 		Message message = upd.message();
 		CallbackQuery callbackQ = upd.callbackQuery();
-		System.out.println("---- New message in SecretSantaBot ---- ");
 		if (message != null) {
 			System.out.println("---- message ---- ");
 			processMessage(message);

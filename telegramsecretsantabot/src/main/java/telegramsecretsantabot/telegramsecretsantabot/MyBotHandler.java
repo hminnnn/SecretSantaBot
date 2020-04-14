@@ -14,7 +14,6 @@ public abstract class MyBotHandler implements Route {
 	public Object handle(Request request, Response response) throws Exception {
 		Update update = BotUtils.parseUpdate(request.body());
 		onWebhookUpdate(update);
-
 		return "ok";
 	}
 

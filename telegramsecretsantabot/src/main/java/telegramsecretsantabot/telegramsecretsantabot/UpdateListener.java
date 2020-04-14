@@ -13,6 +13,7 @@ import com.pengrad.telegrambot.model.MessageEntity;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 
+// No long in use?
 public class UpdateListener implements UpdatesListener {
 
 	private TelegramBot bot;
