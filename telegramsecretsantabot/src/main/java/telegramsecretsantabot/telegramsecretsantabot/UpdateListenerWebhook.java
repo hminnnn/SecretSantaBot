@@ -2,19 +2,16 @@ package telegramsecretsantabot.telegramsecretsantabot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import com.pengrad.telegrambot.TelegramBot;
-import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.CallbackQuery;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.MessageEntity;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.model.User;
 
 public class UpdateListenerWebhook {
 
@@ -48,7 +45,7 @@ public class UpdateListenerWebhook {
 		if (secretSantaBot != null) {
 			secretSantaBot.update(upd);
 		} else {
-			System.out.println("ERROR: SECRETSANTABOT IS NULL AT PROCESSUPDATE");
+			logger.info("ERROR: SECRETSANTABOT IS NULL AT PROCESSUPDATE");
 		}
 	}
 
@@ -76,7 +73,7 @@ public class UpdateListenerWebhook {
 
 			if (isBotCommand(commandType)) {
 
-				System.out.println("(message.chat():" + message.chat());
+				logger.info("(message.chat(): " + message.chat());
 
 				// Group chat
 				if (isFromGroupChat(message.chat().type().toString())) {

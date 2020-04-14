@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.CallbackQuery;
 import com.pengrad.telegrambot.model.Message;
@@ -11,6 +14,9 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 
 public class SecretSantaBot {
+
+	private static final Logger logger = LogManager.getLogger(SecretSantaBot.class);
+
 	private TelegramBot bot;
 	private Update update;
 
@@ -18,7 +24,6 @@ public class SecretSantaBot {
 	private String groupChatId;
 	private String groupChatName;
 	private String individualChatId;
-	private String chatId;
 
 	private String personCreatedId;
 	private Integer joinMsgId;
@@ -35,57 +40,50 @@ public class SecretSantaBot {
 		groupChatId = chatId;
 		participantIdNameMap = new HashMap<String, String>();
 		userChatIdMap = new HashMap<String, String>();
-
-
-		System.out.println("---- New message in SecretSantaBot ---- ");
-//		joinMsgId = replyMsg.createJoinMainMessage(bot, groupChatId, participantIdNameMap);
-//		groupChatName = update.message().chat().title();
-//		
-//		// get person who created list. only this person can press Finish.
-//		System.out.println("find person who created list id:" + personCreatedId);
-//		User participant = update.message().from();
-//		personCreatedId = getParticipantId(participant);
-//		
-//		System.out.println("joinMsgId:" + joinMsgId);
-//		System.out.println("groupChatId:" + groupChatId);
-
 	}
 
 	public void update(Update upd) {
 		Message message = upd.message();
 		CallbackQuery callbackQ = upd.callbackQuery();
 		if (message != null) {
-			System.out.println("---- message ---- ");
+			logger.info("---- Message is message ---- ");
 			processMessage(message);
 		}
 		if (callbackQ != null) {
-			System.out.println("---- callback ---- ");
+			logger.info("---- Message is callback ---- ");
 			processCallbackQuery(callbackQ);
 		}
-
 	}
 
+	/*
+	 * Callback buttons - should only be from group chat
+	 */
 	private void processCallbackQuery(CallbackQuery callbackQ) {
-		System.out.println("callbackQ:" + callbackQ);
+		logger.info("callbackQ: " + callbackQ);
+		
 		Message callbackMsg = callbackQ.message();
 		String messageChatType = callbackMsg.chat().type().toString();
 		String callbackQData = callbackQ.data();
 		String chatId = callbackMsg.chat().id().toString();
+		
+		boolean isGroupChat = isGroupChat(messageChatType);
 
-		// get chat ids
-		if (isFromGroupChat(messageChatType)) {
+		/*
+		 * get chat ids
+		 */
+		if (isGroupChat) {
 			groupChatId = chatId;
-		} else if (isPrivateChat(messageChatType)) {
+			logger.info("groupChatId:" + groupChatId);
+		} else {
 			individualChatId = chatId;
+			logger.info("individualChatId:" + individualChatId);
 		}
-		System.out.println("groupChatId:" + groupChatId);
-		System.out.println("individualChatId:" + individualChatId);
 
 		// get participant details
 		User participant = callbackQ.from();
 		String participantName = getParticipantName(participant);
-		System.out.println("participant:" + participant);
 		String participantUserId = getParticipantId(participant);
+		logger.info("participant:" + participant);
 
 		switch (callbackQData) {
 		case "RemoveButtonCallback":
@@ -104,7 +102,7 @@ public class SecretSantaBot {
 			} else {
 				if (participantUserId.equals(personCreatedId)) { // only creator can press finish
 					replyMsg.finishButton(bot, groupChatId, joinMsgId, participantIdNameMap);
-					startSecretSantaAllocation();
+					startSecretSantaAllocation(groupChatId);
 				} else {
 					String creatorName = participantIdNameMap.get(personCreatedId);
 					replyMsg.invalidFinishButton(bot, chatId, creatorName);
@@ -115,90 +113,97 @@ public class SecretSantaBot {
 	}
 
 	private void processMessage(Message message) {
+
 		String messageChatType = message.chat().type().toString();
 		String msgText = message.text();
-		chatId = message.chat().id().toString();
-		int reply = 0;
+		String chatId = message.chat().id().toString();
 
-		// get chat ids
-		if (isFromGroupChat(messageChatType)) {
+		boolean isGroupChat = isGroupChat(messageChatType);
+
+		/*
+		 * get chat ids
+		 */
+		if (isGroupChat) {
 			groupChatId = chatId;
-		} else if (isPrivateChat(messageChatType)) {
+			logger.info("groupChatId:" + groupChatId);
+		} else {
 			individualChatId = chatId;
+			logger.info("individualChatId:" + individualChatId);
 		}
-		System.out.println("groupChatId:" + groupChatId);
-		System.out.println("individualChatId:" + individualChatId);
-
+		/*
+		 * Help command
+		 */
 		if (isHelpCommand(msgText)) {
 			replyMsg.helpCommand(bot, chatId);
+			return;
 		}
 
-		else if (isStartCommand(msgText, groupChatId)) {
-			// Can only /start from a private chat
-			if (isFromGroupChat(messageChatType)) {
-				replyMsg.invalidStartCommand(bot, chatId);
-			} else {
+		/*
+		 * Start command - /start can only come from a private chat that was direct from
+		 * a group chat, /start + groupchatid
+		 */
 
-				// get participant details
-				User participant = message.from();
-				String participantName = getParticipantName(participant);
-				String participantUserId = getParticipantId(participant);
+		if (isStartCommand(msgText)) {
+			replyMsg.invalidStartCommand(bot, groupChatId);
+		}
 
-				if (participantIdNameMap.get(participantUserId) != null) {
-					System.out.println("dupe participant");
-					replyMsg.duplicateParticipant(bot, individualChatId, participantName);
-				} else {
-					System.out.println("add participant");
-					participantIdNameMap.put(participantUserId, participantName);
-					userChatIdMap.put(participantUserId, individualChatId);
-					replyMsg.eachParticipantInitCommand(bot, individualChatId, groupChatName);
-
-					System.out.println("joinMsgId:" + joinMsgId);
-					replyMsg.editJoinMainMessage(bot, groupChatId, joinMsgId, participantIdNameMap, groupChatId);
-				}
+		if (isStartCommand(msgText, groupChatId)) {
+			if (isGroupChat) {
+				replyMsg.invalidStartCommand(bot, groupChatId);
+				return;
 			}
 
+			// get participant details
+			User participant = message.from();
+			String participantName = getParticipantName(participant);
+			String participantUserId = getParticipantId(participant);
+
+			if (participantIdNameMap.get(participantUserId) != null) {
+				replyMsg.duplicateParticipant(bot, individualChatId, participantName, groupChatName);
+			} else {
+				participantIdNameMap.put(participantUserId, participantName);
+				userChatIdMap.put(participantUserId, individualChatId);
+				replyMsg.eachParticipantInitCommand(bot, individualChatId, groupChatName);
+
+				logger.info("joinMsgId:" + joinMsgId);
+				replyMsg.editJoinMainMessage(bot, groupChatId, joinMsgId, participantIdNameMap, groupChatId);
+			}
+
+			return;
 		}
 
-		else if (isStartGameCommand(msgText)) {
-
-			if (isFromGroupChat(messageChatType)) {
-				if (joinMsgId != null) {
-					System.out.println("joinMsgId to remove:" + joinMsgId);
-					replyMsg.multipleStartGameCommand(bot, groupChatId, joinMsgId, participantIdNameMap);
-				}
-				String key = groupChatId;
-				participantIdNameMap = new HashMap<String, String>();
-				joinMsgId = replyMsg.createJoinMainMessage(bot, groupChatId, participantIdNameMap, key);
-				groupChatName = update.message().chat().title();
-
-				// get person who created list. only this person can press Finish.
-				System.out.println("find person who created list id:" + personCreatedId);
-				User participant = update.message().from();
-				personCreatedId = getParticipantId(participant);
-			} else {
+		/*
+		 * Start game command - /startgame can only come from groupchats
+		 */
+		if (isStartGameCommand(msgText)) {
+			if (!isGroupChat) {
 				replyMsg.invalidStartGameCommand(bot, chatId);
+				return;
 			}
 
+			if (joinMsgId != null) {
+				logger.info("joinMsgId to remove:" + joinMsgId);
+				replyMsg.multipleStartGameCommand(bot, groupChatId, joinMsgId, participantIdNameMap);
+				joinMsgId = null;
+			}
+			String key = groupChatId;
+			participantIdNameMap = new HashMap<String, String>();
+			joinMsgId = replyMsg.createJoinMainMessage(bot, groupChatId, participantIdNameMap, key);
+			groupChatName = update.message().chat().title();
+
+			// get person who created list. only this person can press Finish.
+			logger.info("find person who created list id:" + personCreatedId);
+			User participant = update.message().from();
+			personCreatedId = getParticipantId(participant);
+			return;
 		}
-
-		else if (isInvalidStartCommand(msgText)) {
-			replyMsg.invalidJoin(bot, individualChatId, groupChatName);
-		}
-
-		else if (isStartGameCommand(msgText)) {
-			
-		} else {
-
-			replyMsg.invalidCommand(bot, chatId);
-		}
-
+		replyMsg.invalidCommand(bot, chatId);
 
 	}
 
 	private boolean isHelpCommand(String command) {
 		if (command.contains("/help")) {
-			System.out.println("/help");
+			logger.info("/help");
 			return true;
 		}
 		return false;
@@ -211,29 +216,29 @@ public class SecretSantaBot {
 		return false;
 	}
 
-	private boolean isInvalidStartCommand(String command) {
+	private boolean isStartCommand(String command) {
 		if (command.equals(("/start"))) {
 			return true;
 		}
 		return false;
 	}
-	
 
 	private boolean isStartGameCommand(String command) {
 		if (command.contains("/startgame")) {
-			System.out.println("/startgame");
+			logger.info("/startgame");
 			return true;
 		}
 		return false;
 	}
 
-	private boolean isPrivateChat(String messageChatType) {
-		return messageChatType.equalsIgnoreCase("private");
-	}
-
-	private boolean isFromGroupChat(String messageChatType) {
-		return messageChatType.equalsIgnoreCase("group") || messageChatType.equalsIgnoreCase("supergroup");
-
+	private boolean isGroupChat(String messageChatType) {
+		if (messageChatType.equalsIgnoreCase("group") || messageChatType.equalsIgnoreCase("supergroup")) {
+			return true;
+		}
+//		else if (messageChatType.equalsIgnoreCase("private")) {
+//			return "private";
+//		}
+		return false;
 	}
 
 	private String getParticipantName(User participant) {
@@ -254,7 +259,7 @@ public class SecretSantaBot {
 		return participant.id().toString();
 	}
 
-	private void startSecretSantaAllocation() {
+	private void startSecretSantaAllocation(String groupChatId) {
 		ArrayList<String> participantIdList = new ArrayList<String>();
 		for (String id : participantIdNameMap.keySet()) {
 			participantIdList.add(id);
@@ -268,18 +273,18 @@ public class SecretSantaBot {
 			replyAllocation(santaAllocationResult, userChatIdMap);
 
 		} else {
-			replyMsg.errorOccured(bot, chatId);
+			replyMsg.errorOccured(bot, groupChatId);
 		}
 	}
 
 	private Map<String, String> mapResultToUserId(int[][] mappingMatrix, ArrayList<String> participantIdList) {
 		Map<String, String> santaAllocationResult = new HashMap<String, String>();
-		System.out.println("-----mapResultToUserId----");
+		logger.info("-----mapResultToUserId----");
 		for (int i = 0; i < participantIdNameMap.size(); i++) {
 			for (int j = 0; j < participantIdNameMap.size(); j++) {
 				if (mappingMatrix[i][j] == 2) {
 					santaAllocationResult.put(participantIdList.get(i), participantIdList.get(j));
-					System.out.println(participantIdList.get(i) + "gives" + participantIdList.get(j));
+					logger.info(participantIdList.get(i) + "gives" + participantIdList.get(j));
 				}
 			}
 		}
@@ -287,19 +292,19 @@ public class SecretSantaBot {
 	}
 
 	private void replyAllocation(Map<String, String> santaAllocationResult, Map<String, String> userChatIdMap) {
-		System.out.println("-----replyAllocation----");
+		logger.info("-----replyAllocation----");
 		for (Map.Entry<String, String> item : santaAllocationResult.entrySet()) {
 			String userId = item.getKey();
 			String santeeId = item.getValue();
-			System.out.println("userId:" + userId);
+			logger.info("userId:" + userId);
 
 			// get user's chat id
 			String chatId = userChatIdMap.get(userId);
-			System.out.println("chatId:" + chatId);
+			logger.info("chatId:" + chatId);
 
 			// get name of santee user is giving to
 			String santeeName = participantIdNameMap.get(santeeId);
-			System.out.println("santeeName:" + santeeName);
+			logger.info("santeeName:" + santeeName);
 
 			replyMsg.replyAllocation(bot, chatId, santeeName);
 		}

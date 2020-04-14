@@ -23,13 +23,10 @@ public class TelegramMain {
 		final String portNumber = System.getenv("PORT");
 		logger.info("port:" + portNumber);
 		logger.info("appUrl:" + appUrl);
-		System.out.println("port:" + portNumber);
 
 		if (portNumber != null) {
 			port(Integer.parseInt(portNumber));
 		}
-
-		logger.info("Using webhooks.");
 
 		MyBotHandler myBotHandler = new Bot();
 		String token = myBotHandler.getToken();
@@ -37,9 +34,9 @@ public class TelegramMain {
 		if (appUrl != null) {
 			BaseResponse response = myBotHandler.getBot().execute(new SetWebhook().url(appUrl + "/" + token));
 			boolean ok = response.isOk();
-			System.out.println("Webhook: " + response.description());
-			System.out.println(ok);
-			System.out.println("Bot ready");
+			logger.info("Webhook: " + response.description());
+//			System.out.println(ok);
+			logger.info("Bot ready");
 		} else {
 			System.out.println("appUrl is null, Bot not ready");
 		}
