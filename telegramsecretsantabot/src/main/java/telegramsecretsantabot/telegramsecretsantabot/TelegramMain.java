@@ -34,7 +34,7 @@ public class TelegramMain {
 		if (appUrl != null) {
 			BaseResponse response = myBotHandler.getBot().execute(new SetWebhook().url(appUrl + "/" + token));
 			boolean ok = response.isOk();
-			System.out.println(response.description());
+			System.out.println("Webhook: " + response.description());
 			System.out.println(ok);
 			System.out.println("Bot ready");
 		} else {
