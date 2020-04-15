@@ -37,7 +37,7 @@ public class TelegramMain {
 //			System.out.println(ok);
 			logger.info("Bot ready");
 		} else {
-			System.out.println("appUrl is null, Bot not ready");
+			logger.error("appUrl is null, Bot not ready");
 		}
 
 
