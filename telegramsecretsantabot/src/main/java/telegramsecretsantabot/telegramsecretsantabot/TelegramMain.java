@@ -3,9 +3,8 @@ package telegramsecretsantabot.telegramsecretsantabot;
 import static spark.Spark.port;
 import static spark.Spark.post;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pengrad.telegrambot.request.SetWebhook;
 import com.pengrad.telegrambot.response.BaseResponse;
@@ -16,7 +15,7 @@ public class TelegramMain {
 	// using webhook
 	public static void main(String[] args) {
 
-		BasicConfigurator.configure();
+//		BasicConfigurator.configure();
 		
 		// herokuapp url
 		final String appUrl = System.getenv("APP_URL");

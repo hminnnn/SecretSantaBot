@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.CallbackQuery;
@@ -77,8 +77,6 @@ public class UpdateListenerWebhook {
 					String groupChatId = message.chat().id().toString();
 
 					if (santaBotsChatsMap.get(groupChatId) != null) {
-						// 14/04/2020 - Saves current ongoing session in map. Once finish button is
-						// pressed, remove from list (possible?)
 						return santaBotsChatsMap.get(groupChatId);
 					} else {
 						// startgame, new session new secretSantaBot
@@ -119,7 +117,6 @@ public class UpdateListenerWebhook {
 
 	private SecretSantaBot extractChatIdsFromCallbackQ(Update upd, CallbackQuery callbackQ) {
 		String groupChatId = callbackQ.message().chat().id().toString();
-		System.out.println("callback command from groupChatId: " + groupChatId);
 
 		return santaBotsChatsMap.get(groupChatId);
 	}
@@ -135,7 +132,6 @@ public class UpdateListenerWebhook {
 		if (command.contains("/start") && command.length() > 7) {
 			String key = command.substring(6);
 			key = key.trim();
-			System.out.println("Join Button from this groupchat: " + key);
 			return key;
 
 		}
