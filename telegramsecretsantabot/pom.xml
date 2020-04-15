@@ -57,9 +57,9 @@
 				<configuration>
 					<appName>nameless-brushlands-48423</appName>
 					<processTypes>
-						<!-- <web>java $JAVA_OPTS -cp target/classes:target/dependency/*
-							telegramsecretsantabot.telegramsecretsantabot.TelegramMain
-							-Dserver.port=$PORT</web> -->
+				<!-- 	 <web>java $JAVA_OPTS -cp target/classes:target/dependency/*
+							/target/telegramsecretsantabot-0.0.1.jar
+							-Dserver.port=$PORT</web>  -->
 					</processTypes>
 				</configuration>
 
