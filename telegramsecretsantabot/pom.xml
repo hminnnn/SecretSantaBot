@@ -11,6 +11,8 @@
 
 	<name>telegramsecretsantabot</name>
 
+
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -53,10 +55,11 @@
 				<version>3.0.2</version>
 
 				<configuration>
+					<appName>nameless-brushlands-48423</appName>
 					<processTypes>
-						<web>java $JAVA_OPTS -cp target/classes:target/dependency/*
+						<!-- <web>java $JAVA_OPTS -cp target/classes:target/dependency/*
 							telegramsecretsantabot.telegramsecretsantabot.TelegramMain
-							-Dserver.port=$PORT</web>
+							-Dserver.port=$PORT</web> -->
 					</processTypes>
 				</configuration>
 
