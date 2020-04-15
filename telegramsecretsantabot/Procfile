@@ -1,2 +1,1 @@
-worker: mvn clean heroku:deploy
-web: java $JAVA_OPTS -cp target/classes:target/dependency/* telegramsecretsantabot.telegramsecretsantabot.TelegramMain -Dserver.port=$PORT
+web: java $JAVA_OPTS -cp target/classes:target/dependency/* -jar /target/telegramsecretsantabot-0.0.1.jar -Dserver.port=$PORT
