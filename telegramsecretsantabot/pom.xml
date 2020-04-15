@@ -7,9 +7,10 @@
 	<groupId>telegramsecretsantabot</groupId>
 	<artifactId>telegramsecretsantabot</artifactId>
 	<version>0.0.1</version>
-	<packaging>jar</packaging>
-
+	<!-- <packaging>jar</packaging> -->
 	<name>telegramsecretsantabot</name>
+
+
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -45,20 +46,22 @@
 
 	</dependencies>
 
+
 	<build>
+
+
 		<plugins>
 			<plugin>
 				<groupId>com.heroku.sdk</groupId>
 				<artifactId>heroku-maven-plugin</artifactId>
-				<version>2.0.6</version>
-
-
-				<!-- <configuration> <processTypes> <web>java $JAVA_OPTS -cp target/classes:target/dependency/* 
-					telegramsecretsantabot.telegramsecretsantabot.TelegramMain -Dserver.port=$PORT</web> 
-					</processTypes> </configuration> -->
-
+				<version>3.0.2</version>
+				<configuration>
+					<appName>nameless-brushlands-48423</appName>
+				</configuration>
 			</plugin>
 		</plugins>
+
+
 	</build>
 
 
