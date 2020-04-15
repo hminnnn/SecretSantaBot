@@ -45,18 +45,24 @@
 		</dependency>
 
 	</dependencies>
-	
-	
-		<build>
+
+
+	<build>
+
+
 		<plugins>
 			<plugin>
 				<groupId>com.heroku.sdk</groupId>
 				<artifactId>heroku-maven-plugin</artifactId>
 				<version>3.0.2</version>
-
+				<configuration>
+					<appName>nameless-brushlands-48423</appName>
+				</configuration>
 			</plugin>
 		</plugins>
+
+
 	</build>
-	
+
 
 </project>
